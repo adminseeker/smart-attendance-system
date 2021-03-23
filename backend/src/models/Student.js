@@ -15,7 +15,6 @@ const StudentSchema = new mongoose.Schema({
     },
     access_id:{
         type:String,
-        require:true,
         unique:true
     }
     
