@@ -7,7 +7,7 @@ const AdminSchema = new mongoose.Schema({
     },
     access_id:{
         type:String,
-        unique:true
+        default:""
     }
     
 });

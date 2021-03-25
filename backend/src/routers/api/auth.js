@@ -8,6 +8,9 @@ const User = require("../../models/User");
 const ForgotPassword = require("../../models/ForgotPassword");
 
 const mailer = require("../../mailer/mailer");
+const Student = require("../../models/Student");
+const Teacher = require("../../models/Teacher");
+const Admin = require("../../models/Admin");
 
 const router = express.Router();
 
@@ -24,6 +27,9 @@ router.get("/",auth,async (req,res)=>{
         if(!user){
             return res.status(404).json({msg:"User Not Found"});
         }
+        const student = await Student.findOne({user_id:user.id})
+        const teacher = await Teacher.findOne({user_id:user.id})
+        const admin = await Admin.findOne({user_id:user.id})
         if(user.role=="admin")
             return res.json({user,admin});
         else if(user.role=="student")

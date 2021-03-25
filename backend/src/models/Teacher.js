@@ -11,7 +11,7 @@ const TeacherSchema = new mongoose.Schema({
     },
     access_id:{
         type:String,
-        unique:true
+        default:""
     }
     
 });

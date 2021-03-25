@@ -118,7 +118,7 @@ router.patch("/admin/me",auth,async (req,res)=>{
     delete updates._id;
     delete updates.id;
     delete updates.password
-    const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password")
+    const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password -tokens")
     const editAdmin = await Admin.findOneAndUpdate({user_id:user.id},updates,{new:true})
     
     if(!editUser && !editAdmin){
@@ -150,7 +150,7 @@ router.patch("/update/:id",auth,async (req,res)=>{
         delete updates._id;
         delete updates.id;
         delete updates.password;
-        const editUser = await User.findOneAndUpdate({_id:req.params.id},updates,{new:true}).select("-password")
+        const editUser = await User.findOneAndUpdate({_id:req.params.id},updates,{new:true}).select("-password -tokens")
         if(!editUser){
             return res.json({"msg":"user not found!"})
         }
@@ -175,7 +175,7 @@ router.patch("/update/:id",auth,async (req,res)=>{
     method: "PATCH"
 */
 
-router.patch("/update/me",auth,async (req,res)=>{
+router.patch("/me",auth,async (req,res)=>{
     try {
         const user = req.user;
         if(!user){
@@ -187,7 +187,7 @@ router.patch("/update/me",auth,async (req,res)=>{
         delete updates._id;
         delete updates.id;
         delete updates.password;
-        const editUser = await User.findOneAndUpdate({_id:req.params.id},updates,{new:true}).select("-password")
+        const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password -tokens")
         if(!editUser){
             return res.json({"msg":"user not found and update failure!"})
         }
