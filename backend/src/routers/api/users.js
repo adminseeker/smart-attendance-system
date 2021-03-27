@@ -8,6 +8,7 @@ const User = require("../../models/User");
 const Teacher = require("../../models/Teacher");
 const Student = require("../../models/Student");
 const Admin = require("../../models/Admin");
+const { json } = require("express");
 
 
 const router = express.Router();
@@ -73,7 +74,12 @@ router.post("/add",auth,async (req,res)=>{
         if(check.length!==0){
             return res.json({"msg":"Email already registered!"})
         }
-
+        const usn = req.body.usn.toUpperCase();
+        const usnFromDB1 = await Teacher.findOne({usn});
+        const usnFromDB2 = await Student.findOne({usn});
+            if(usnFromDB1 || usnFromDB2){
+                return res.json({"msg":"USN already registered!"})
+            }
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password,salt)
         
@@ -84,10 +90,10 @@ router.post("/add",auth,async (req,res)=>{
             await admin.save()
         }
         else if(user.role=="teacher"){
-            const teacher = new Teacher({user_id:user.id,usn:req.body.usn});
+            const teacher = new Teacher({user_id:user.id,usn});
             await teacher.save();
         }else if(user.role=="student"){
-            const student = new Student({user_id:user.id,usn:req.body.usn,semester:req.body.semester});
+            const student = new Student({user_id:user.id,usn,semester:req.body.semester});
             await student.save();
         }else{
             return res.status(404).json("invalid user");
@@ -99,6 +105,68 @@ router.post("/add",auth,async (req,res)=>{
     }
 });
 
+/* 
+    route : "/api/users/students",
+    desc : "Admin gets students list",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/students",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const students = await Student.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        res.json(students);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
+
+/* 
+    route : "/api/users/teachers",
+    desc : "Admin gets teachers list",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/teachers",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const teachers = await Teacher.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        res.json(teachers);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
+
+/* 
+    route : "/api/users/admins",
+    desc : "Admin gets all admins",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/admins",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const admins = await Admin.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        res.json(admins);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
 
 /* 
     route : "/api/users/admin/me",
@@ -154,6 +222,20 @@ router.patch("/update/:id",auth,async (req,res)=>{
         if(!editUser){
             return res.json({"msg":"user not found!"})
         }
+        if(updates.usn){
+            updates.usn = updates.usn.toUpperCase();
+            const usnFromDB1 = await Teacher.findOne({usn:updates.usn});
+            const usnFromDB2 = await Student.findOne({usn:updates.usn});
+            if(usnFromDB1 || usnFromDB2){
+                return res.json({"msg":"USN already registered!"})
+            }
+        }
+        if(updates.email){
+            const check = await User.find({email:req.body.email});
+        if(check.length!==0){
+            return res.json({"msg":"Email already registered!"})
+        }
+        }
         const editStudentUser = await Student.findOneAndUpdate({user_id:req.params.id},updates,{new:true})
         const editTeacherUser = await Teacher.findOneAndUpdate({user_id:req.params.id},updates,{new:true})
         if(editStudentUser){
@@ -187,6 +269,7 @@ router.patch("/me",auth,async (req,res)=>{
         delete updates._id;
         delete updates.id;
         delete updates.password;
+        delete updates.email;
         const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password -tokens")
         if(!editUser){
             return res.json({"msg":"user not found and update failure!"})
@@ -227,6 +310,42 @@ router.patch("/password",auth,async (req,res)=>{
     }
         return res.json({code:"2","msg":"Error in changing password!"});
 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+});
+
+/* 
+    route : "/api/users/:id",
+    desc : "Admin removes user by his id",
+    auth : ["Admin"],
+    method: "PATCH"
+*/
+
+router.delete("/:id",auth,async (req,res)=>{
+    try {
+        const user = req.user;
+        if(!user || !user.role=="admin"){
+            return res.json({"msg":"unauthorized access!"})
+        }
+    
+        const UserToDelete = await User.findById(req.params.id);
+        if(!UserToDelete){
+            return res.json({"msg":"user not found!"})
+        }
+        if(UserToDelete.role=="student"){
+            const deletedUser = await User.deleteOne({_id:req.params.id})
+            const student = await Student.deleteOne({user_id:req.params.id});
+            return res.json({"msg":"Student deleted"})
+        }else if(UserToDelete.role=="teacher"){
+            const deletedUser = await User.deleteOne({_id:req.params.id})
+            const teacher = await Teacher.deleteOne({user_id:req.params.id});
+            return res.json({"msg":"Teacher deleted"})
+        }else if(UserToDelete.role=="admin"){
+            return res.json({"msg":"Admin user cannot be deleted"})
+        }
+        return res.json({"msg":"Something went wrong"})
     } catch (error) {
         console.log(error);
         return res.status(500).send();
