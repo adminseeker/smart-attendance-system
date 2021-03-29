@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
 const StudentAttendanceSchema = new mongoose.Schema({
-    student_id:{
+    student:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Student"
     },
-    timing_id:{
+    timing:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Timing"
     },
-    class_id:{
+    class:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Class"
     },

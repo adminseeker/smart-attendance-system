@@ -2,17 +2,21 @@ const mongoose = require("mongoose");
 
 const RoomSchema = new mongoose.Schema({
     devices:[{
-        device_id: {
-         type:String,
-         unique:true
-         }
+        device: {
+         type:String
+         },
+         _id:false
      }],
     timings:[{
-        timing_id: {
+        timing: {
          type:mongoose.Schema.Types.ObjectId,
          ref:"Timing"
          }
-     }]
+     }],
+     room_name:{
+         type:String,
+         required:true
+     }
 });
 
 module.exports = mongoose.model("Room",RoomSchema);

@@ -9,9 +9,10 @@ const TimingSchema = new mongoose.Schema({
         type:Date,
         default:Date.now
     },
-    class_id:{
+    class:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Class"
+        ref:"Class",
+        required:true
     }
 });
 

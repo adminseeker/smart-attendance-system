@@ -38,7 +38,7 @@ router.post("/",async (req,res)=>{
             user.tokens =user.tokens.concat({token})
         });
         if(user.role=="admin"){
-            const admin = new Admin({user_id:user.id})
+            const admin = new Admin({user:user.id})
             await admin.save()
         }
         // if(user.isTeacher){
@@ -58,7 +58,7 @@ router.post("/",async (req,res)=>{
 
 /* 
     route : "/api/users/add",
-    desc : "Admin adds other users (Teacher,Student)",
+    desc : "Admin adds other users (Teacher,Student,Admin)",
     auth : ["Admin"],
     method: "POST"
 */
@@ -74,26 +74,29 @@ router.post("/add",auth,async (req,res)=>{
         if(check.length!==0){
             return res.json({"msg":"Email already registered!"})
         }
-        const usn = req.body.usn.toUpperCase();
-        const usnFromDB1 = await Teacher.findOne({usn});
-        const usnFromDB2 = await Student.findOne({usn});
-            if(usnFromDB1 || usnFromDB2){
-                return res.json({"msg":"USN already registered!"})
-            }
+        var usn = "";
+        if(req.body.usn){
+            usn = req.body.usn.toUpperCase();
+            const usnFromDB1 = await Teacher.findOne({usn});
+            const usnFromDB2 = await Student.findOne({usn});
+                if(usnFromDB1 || usnFromDB2){
+                    return res.json({"msg":"USN already registered!"})
+                }
+        }
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password,salt)
         
         const user = new User(req.body);
         await user.save();
         if(user.role=="admin"){
-            const admin = new Admin({user_id:user.id})
+            const admin = new Admin({user:user.id})
             await admin.save()
         }
         else if(user.role=="teacher"){
-            const teacher = new Teacher({user_id:user.id,usn});
+            const teacher = new Teacher({user:user.id,usn});
             await teacher.save();
         }else if(user.role=="student"){
-            const student = new Student({user_id:user.id,usn,semester:req.body.semester});
+            const student = new Student({user:user.id,usn,semester:req.body.semester});
             await student.save();
         }else{
             return res.status(404).json("invalid user");
@@ -119,8 +122,32 @@ router.get("/students",auth,async (req,res)=>{
             return res.status(401).json({"msg":"Not authorized user!"})
         }
 
-        const students = await Student.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        const students = await Student.find({}).populate("user",["_id","name","email","phone","role"]);
         res.json(students);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
+
+/* 
+    route : "/api/users/student/:id",
+    desc : "Admin gets student by id",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/student/:id",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const student = await Student.findById(req.params.id).populate("user",["_id","name","email","phone","role"]);
+        if(!student){
+            return res.json({"msg":"no student found"});
+        }
+        return res.json(student);       
     } catch (error) {
         res.status(400).send(error);   
     }
@@ -140,8 +167,32 @@ router.get("/teachers",auth,async (req,res)=>{
             return res.status(401).json({"msg":"Not authorized user!"})
         }
 
-        const teachers = await Teacher.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        const teachers = await Teacher.find({}).populate("user",["_id","name","email","phone","role"]);
         res.json(teachers);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
+
+/* 
+    route : "/api/users/teacher/:id",
+    desc : "Admin gets teacher by id",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/teacher/:id",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const teacher = await Teacher.findById(req.params.id).populate("user",["_id","name","email","phone","role"]);
+        if(!teacher){
+            return res.json({"msg":"no teacher found"});
+        }
+        return res.json(teacher);       
     } catch (error) {
         res.status(400).send(error);   
     }
@@ -161,8 +212,32 @@ router.get("/admins",auth,async (req,res)=>{
             return res.status(401).json({"msg":"Not authorized user!"})
         }
 
-        const admins = await Admin.find({}).populate("user_id",["_id","name","email","phone","role"]);
+        const admins = await Admin.find({}).populate("user",["_id","name","email","phone","role"]);
         res.json(admins);       
+    } catch (error) {
+        res.status(400).send(error);   
+    }
+});
+
+/* 
+    route : "/api/users/admin/:id",
+    desc : "Admin gets admin by id",
+    auth : ["Admin"],
+    method: "GET"
+*/
+
+router.get("/admin/:id",auth,async (req,res)=>{
+    try {
+        
+        if(req.user.role!=="admin"){
+            return res.status(401).json({"msg":"Not authorized user!"})
+        }
+
+        const admin = await Admin.findById(req.params.id).populate("user",["_id","name","email","phone","role"]);
+        if(!admin){
+            return res.json({"msg":"no admin found"});
+        }
+        return res.json(admin);       
     } catch (error) {
         res.status(400).send(error);   
     }
@@ -187,7 +262,7 @@ router.patch("/admin/me",auth,async (req,res)=>{
     delete updates.id;
     delete updates.password
     const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password -tokens")
-    const editAdmin = await Admin.findOneAndUpdate({user_id:user.id},updates,{new:true})
+    const editAdmin = await Admin.findOneAndUpdate({user:user.id},updates,{new:true})
     
     if(!editUser && !editAdmin){
         return res.json({"msg":"admin not found!"})
@@ -236,8 +311,8 @@ router.patch("/update/:id",auth,async (req,res)=>{
             return res.json({"msg":"Email already registered!"})
         }
         }
-        const editStudentUser = await Student.findOneAndUpdate({user_id:req.params.id},updates,{new:true})
-        const editTeacherUser = await Teacher.findOneAndUpdate({user_id:req.params.id},updates,{new:true})
+        const editStudentUser = await Student.findOneAndUpdate({user:req.params.id},updates,{new:true})
+        const editTeacherUser = await Teacher.findOneAndUpdate({user:req.params.id},updates,{new:true})
         if(editStudentUser){
             return res.json({user:editUser,student:editStudentUser})
         }else if(editTeacherUser){
@@ -336,11 +411,11 @@ router.delete("/:id",auth,async (req,res)=>{
         }
         if(UserToDelete.role=="student"){
             const deletedUser = await User.deleteOne({_id:req.params.id})
-            const student = await Student.deleteOne({user_id:req.params.id});
+            const student = await Student.deleteOne({user:req.params.id});
             return res.json({"msg":"Student deleted"})
         }else if(UserToDelete.role=="teacher"){
             const deletedUser = await User.deleteOne({_id:req.params.id})
-            const teacher = await Teacher.deleteOne({user_id:req.params.id});
+            const teacher = await Teacher.deleteOne({user:req.params.id});
             return res.json({"msg":"Teacher deleted"})
         }else if(UserToDelete.role=="admin"){
             return res.json({"msg":"Admin user cannot be deleted"})
