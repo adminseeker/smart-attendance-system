@@ -18,7 +18,8 @@ const router = express.Router();
     auth : ["Admin"],
     method: "POST"
 */
-router.post("/",auth,async (req,res)=>{
+router.post("/",auth,async (req,res)=>{\
+    
     try {
         const user = req.user;
         if(user.role!="admin"){
