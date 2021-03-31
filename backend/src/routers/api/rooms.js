@@ -35,6 +35,8 @@ router.post("/",auth,async (req,res)=>{
     }
 });
 
+
+
 /* 
     route : "/api/rooms/:id/device",
     desc : "Add device to an existing room by id",
