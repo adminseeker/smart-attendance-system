@@ -11,7 +11,8 @@ const RoomSchema = new mongoose.Schema({
         timing: {
          type:mongoose.Schema.Types.ObjectId,
          ref:"Timing"
-         }
+         },
+         _id:false
      }],
      room_name:{
          type:String,
