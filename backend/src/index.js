@@ -14,7 +14,7 @@ app.use("/api/users/",require("./routers/api/users"));
 app.use("/api/auth/",require("./routers/api/auth"));
 app.use("/api/rooms/",require("./routers/api/rooms"));
 app.use("/api/classes/",require("./routers/api/classes"));
-// app.use("/api/upload/",require("./routers/api/upload"));
+app.use("/api/attendance/",require("./routers/api/attendance"));
 
 // if(process.env.NODE_ENV==="production"){
     console.log(__dirname);

@@ -8,7 +8,6 @@ const User = require("../../models/User");
 const Teacher = require("../../models/Teacher");
 const Student = require("../../models/Student");
 const Admin = require("../../models/Admin");
-const { json } = require("express");
 
 
 const router = express.Router();
