@@ -260,6 +260,12 @@ router.patch("/admin/me",auth,async (req,res)=>{
     delete updates._id;
     delete updates.id;
     delete updates.password
+    if(updates.email){
+        const r = await User.find({email:updates.email});
+        if(r.length!==0){
+            return res.json({"msg":"This email already registered!"})
+        }
+    }
     const editUser = await User.findOneAndUpdate({_id:user.id},updates,{new:true}).select("-password -tokens")
     const editAdmin = await Admin.findOneAndUpdate({user:user.id},updates,{new:true})
     

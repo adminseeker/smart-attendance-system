@@ -5,6 +5,8 @@ const auth = require("../../middleware/auth");
 const User = require("../../models/User");
 
 const Class = require("../../models/Class");
+const Teacher = require("../../models/Teacher");
+const Student = require("../../models/Student");
 
 const mailer = require("../../mailer/mailer");
 
@@ -57,6 +59,10 @@ router.post("/:id/students",auth,async (req,res)=>{
         students = students.map((student)=>{
             return {student:student}
         })
+        const r = await Student.find({_id:{$in:studentsBody}});
+        if(r.length==0){
+            return res.json({"msg":"This contains non-existent student id!"})
+        }
         const check = await Class.find({_id:req.params.id,students:{$in:students}})
         if(check.length!==0){
             return res.json({"msg":"This student is already registered in this class!"})
@@ -83,6 +89,10 @@ router.post("/:id/teacher",auth,async (req,res)=>{
         const user = req.user;
         if(user.role!="admin"){
             return res.status(401).json({"msg":"Authorization denied!"});
+        }
+        const result = await Teacher.findById(req.body.teacher)
+        if(!result){
+            return res.json({"msg":"Teacher not found or some error in updating!"})
         }
         const updated = await Class.findOneAndUpdate({_id:req.params.id},{teacher:req.body.teacher},{new:true});
         if(!updated){

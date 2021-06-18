@@ -16,6 +16,6 @@ const StudentAttendanceSchema = new mongoose.Schema({
     lastUpdated:{
         type:Date
     }
-});
+},{collection:'studentAttendances'});
 
 module.exports = mongoose.model("StudentAttendance",StudentAttendanceSchema);

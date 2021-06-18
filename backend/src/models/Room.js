@@ -18,6 +18,25 @@ const RoomSchema = new mongoose.Schema({
          type:String,
          required:true
      }
+    //  ,
+    //  timetable:[{
+    //      day:[{
+    //         class:{
+    //             type:mongoose.Schema.Types.ObjectId,
+    //             ref:"Class",
+    //             required:true
+    //         },
+    //         start_time:{
+    //             type:Date,
+    //             default:Date.now
+    //         },
+    //         end_time:{
+    //             type:Date,
+    //             default:Date.now
+    //         }
+    //      }]
+        
+    //  }]
 });
 
 module.exports = mongoose.model("Room",RoomSchema);

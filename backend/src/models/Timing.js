@@ -9,6 +9,12 @@ const TimingSchema = new mongoose.Schema({
         type:Date,
         default:Date.now
     },
+    day:{
+        type:String,
+        required:true,
+        default:"1",
+        enum:["0","1","2","3","4","5","6"]
+    },
     class:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Class",

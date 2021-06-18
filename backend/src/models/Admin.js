@@ -8,6 +8,10 @@ const AdminSchema = new mongoose.Schema({
     access_id:{
         type:String,
         default:""
+    },
+    admin_access_id:{
+        type:String,
+        default:""
     }
     
 });
