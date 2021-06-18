@@ -1,4 +1,4 @@
-#Smart Attendance System (Under development)
+# Smart Attendance System (Under development)
 
 This repo contains web server and ui interface required for the smart-attendance-system.
 
