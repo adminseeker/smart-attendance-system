@@ -180,7 +180,7 @@ router.get("/teacher/:id",auth,async (req,res)=>{
 });
 
 /* 
-    route : "/api/attendance/teacher/user_id",
+    route : "/api/attendance/teacher/user_id/classes",
     desc : "GET Student Attendance for all classes by teacher",
     auth : ["Admin","Teacher"],
     method: "GET"

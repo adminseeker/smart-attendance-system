@@ -297,7 +297,6 @@ router.patch("/update/:id",auth,async (req,res)=>{
         delete updates.token;
         delete updates._id;
         delete updates.id;
-        delete updates.password;
         const editUser = await User.findOneAndUpdate({_id:req.params.id},updates,{new:true}).select("-password -tokens")
         if(!editUser){
             return res.json({"msg":"user not found!"})
