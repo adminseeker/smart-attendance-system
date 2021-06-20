@@ -31,6 +31,7 @@ import AddUsers from "../components/users/AddUsers";
 import EditStudents from "../components/users/EditStudents";
 import EditTeachers from "../components/users/EditTeachers";
 import EditAdmins from "../components/users/EditAdmins";
+import ClassUsers from "../components/classes/ClassUsers";
 
 const history = createHistory();
 
@@ -58,6 +59,7 @@ const AppRouter = ()=>{
                 <PrivateRoute path="/edit/students/:id" component={EditStudents} exact={true}/>
                 <PrivateRoute path="/edit/teachers/:id" component={EditTeachers} exact={true}/>
                 <PrivateRoute path="/edit/admins/:id" component={EditAdmins} exact={true}/>
+                <PrivateRoute path="/class/:id/users" component={ClassUsers} exact={true}/>
 
                 <PrivateRoute path="/vehicles/add" component={AddVehicles} exact={true}/>
                 <PrivateRoute path="/vehicles/edit/:id" component={EditVehicle} exact={true}/>

@@ -7,11 +7,12 @@ import useSWR from "swr";
 import FacebookCircularProgress from "../FacebookCircularProgress";
 
 
-const Users = ({getUsers})=>{
+const Users = ({getUsers,users})=>{
     useSWR("/users/students",()=>{
         getUsers()
     })
     return (
+        !users ? <FacebookCircularProgress /> :
         <div>
             Users
             <Link to={"/users/students"}>Students</Link>

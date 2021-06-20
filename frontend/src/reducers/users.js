@@ -21,7 +21,9 @@ const usersReducer = (state=defaultUserState,action)=>{
         case "REMOVE_USER":
             return state.filter((user)=>(user._id!==action._id));
         case "GET_USERS":
-            return action.users;
+            return action.users
+        case "CLEAN_USERS":
+            return []
         case "USERS_ERROR":
             return {
                 ...state

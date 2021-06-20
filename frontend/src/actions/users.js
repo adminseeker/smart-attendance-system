@@ -91,5 +91,10 @@ const removeUser = (id)=>{
     }
 }
 
+const cleanUserState = ()=>{
+    return async (dispatch)=>{
+        dispatch({type:"CLEAN_USERS"})
+    }
+}
 
-export {getUsers,addUser,editUsers,removeUser};
+export {getUsers,addUser,editUsers,removeUser,cleanUserState};

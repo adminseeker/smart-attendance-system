@@ -1,5 +1,5 @@
 const express = require("express");
-
+const mongoose = require("mongoose");
 const auth = require("../../middleware/auth");
 
 const User = require("../../models/User");
@@ -78,6 +78,50 @@ router.post("/:id/students",auth,async (req,res)=>{
     }
 });
 
+
+
+/* 
+    route : "/api/classes/:id/students",
+    desc : "Add students to the class by their usn",
+    auth : ["Admin"],
+    method: "POST"
+*/
+router.post("/:id/students/usn",auth,async (req,res)=>{
+    try {
+        const user = req.user;
+        if(user.role!="admin"){
+            return res.status(401).json({"msg":"Authorization denied!"});
+        }
+        let studentsBody= req.body.students
+        let set = new Set(studentsBody);
+        let students = Array.from(set);
+        
+        if(students.length!==studentsBody.length){
+            return res.json({"msg":"student repeated!"})
+        }
+        const r = await Student.find({usn:{$in:studentsBody}});
+        if(r.length==0){
+            return res.json({"msg":"This contains non-existent student id!"})
+        }
+        studentIDS=r.map((student)=>({student:student._id}))
+        console.log("blah blah",studentIDS)
+        const check = await Class.find({_id:req.params.id,"students":{$in:studentIDS}})
+        if(check.length!==0){
+            return res.json({"msg":"This student is already registered in this class!"})
+        }
+        const updated = await Class.findOneAndUpdate({_id:req.params.id},{$addToSet:{students:studentIDS}},{new:true});
+        if(!updated){
+            return res.json({"msg":"class not found or some error in updating!"})
+        }
+        res.json(updated);
+    } catch (error) {
+        res.status(500).send("Server Error!");
+        console.log(error);
+    }
+});
+
+
+
 /* 
     route : "/api/classes/:id/teacher",
     desc : "Add teacher to the class",
@@ -95,6 +139,33 @@ router.post("/:id/teacher",auth,async (req,res)=>{
             return res.json({"msg":"Teacher not found or some error in updating!"})
         }
         const updated = await Class.findOneAndUpdate({_id:req.params.id},{teacher:req.body.teacher},{new:true});
+        if(!updated){
+            return res.json({"msg":"class not found or some error in updating!"})
+        }
+        res.json(updated);
+    } catch (error) {
+        res.status(500).send("Server Error!");
+        console.log(error);
+    }
+});
+
+/* 
+    route : "/api/classes/:id/teacher/usn",
+    desc : "Add teacher to the class by usn",
+    auth : ["Admin"],
+    method: "POST"
+*/
+router.post("/:id/teacher/usn",auth,async (req,res)=>{
+    try {
+        const user = req.user;
+        if(user.role!="admin"){
+            return res.status(401).json({"msg":"Authorization denied!"});
+        }
+        const result = await Teacher.findOne({usn:req.body.usn})
+        if(!result){
+            return res.json({"msg":"Teacher not found or some error in updating!"})
+        }
+        const updated = await Class.findOneAndUpdate({_id:req.params.id},{teacher:result._id},{new:true});
         if(!updated){
             return res.json({"msg":"class not found or some error in updating!"})
         }
@@ -225,19 +296,19 @@ router.patch("/:id/name",auth,async (req,res)=>{
 });
 
 /* 
-    route : "/api/classes/:id/student",
+    route : "/api/classes/class_id/student/student_id",
     desc : "remove student from the class",
     auth : ["Admin"],
     method: "DELETE"
 */
 
-router.delete("/:id/student",auth,async (req,res)=>{
+router.delete("/:id/student/:id2",auth,async (req,res)=>{
     try {
         const user = req.user;
         if(user.role!="admin"){
             return res.status(401).json({"msg":"Authorization denied!"});
         }
-        let student = {student:req.body.student}
+        let student = {student:req.params.id2}
         const _class = await Class.findOneAndUpdate({_id:req.params.id,students:student},{$pull:{students:student}});
         if(!_class){
             return res.status(404).json({"msg":"class or student not found!"});
@@ -250,19 +321,19 @@ router.delete("/:id/student",auth,async (req,res)=>{
 });
 
 /* 
-    route : "/api/classes/:id/teacher",
+    route : "/api/classes/class_id/teacher/teacher_id",
     desc : "remove teacher from the class",
     auth : ["Admin"],
     method: "DELETE"
 */
 
-router.delete("/:id/teacher",auth,async (req,res)=>{
+router.delete("/:id/teacher/:id2",auth,async (req,res)=>{
     try {
         const user = req.user;
         if(user.role!="admin"){
             return res.status(401).json({"msg":"Authorization denied!"});
         }
-        let teacher = req.body.teacher
+        let teacher = req.params.id2
         const _class = await Class.findOneAndUpdate({_id:req.params.id,teacher:teacher},{teacher:null});
         if(!_class){
             return res.status(404).json({"msg":"class or teacher not found!"});
