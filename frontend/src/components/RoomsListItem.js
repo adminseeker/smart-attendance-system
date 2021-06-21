@@ -1,17 +1,23 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import { connect } from "react-redux";
-import {removeRoom} from "../actions/rooms"
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { removeRoom } from '../actions/rooms';
 
-const RoomsListItem = (props)=>(
-    <div>
-            <h3>{props.room.room_name}</h3>
-            <Link to={"/edit/room/"+props.room._id}>Edit</Link>
-            <button onClick={()=>{props.dispatch(removeRoom(props.room._id))}}>Remove</button>
-    </div>
+const RoomsListItem = (props) => (
+  <div>
+    <Link to={'/room/' + props.room._id + '/timings'}>
+      <h3>{props.room.room_name}</h3>
+    </Link>
+    <Link to={'/edit/room/' + props.room._id}>Edit</Link>
+    <button
+      onClick={() => {
+        props.dispatch(removeRoom(props.room._id));
+      }}
+    >
+      Remove
+    </button>
+  </div>
 );
-
-
 
 export default connect()(RoomsListItem);
 

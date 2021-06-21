@@ -1,22 +1,26 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import { removeStudent } from "../../actions/classes";
-import { connect } from "react-redux";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { removeStudent } from '../../actions/classes';
+import { connect } from 'react-redux';
 
-const StudentsListItem = (props)=>{
-    console.log(props.student)
-    return (
-            <div>
-                <h3>{props.student.student.user.name}</h3>
-                <button onClick={()=>{props.dispatch(removeStudent(props.class_id,props.student.student._id))}}>Remove</button>
-
-            </div>
-        )
+const StudentsListItem = (props) => {
+  console.log(props.student);
+  return (
+    <div>
+      <h3>{props.student.student.user.name}</h3>
+      <button
+        onClick={() => {
+          props.removeStudent(props.class_id, props.student.student._id);
+        }}
+      >
+        Remove
+      </button>
+    </div>
+  );
 };
+const mapStateToProps = (state, props) => ({});
 
-
-
-export default connect()(StudentsListItem);
+export default connect(mapStateToProps, { removeStudent })(StudentsListItem);
 
 /* <div>
         <Link to={"/vehicles/edit/"+props.vehicle.vehicle_id}>
