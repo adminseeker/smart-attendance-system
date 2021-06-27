@@ -12,9 +12,6 @@ const AdminDashboard = ({ loading }) => {
     <div>
       <Header />
       <div style={{ marginTop: '5rem' }}>
-        {' '}
-        <Link to={'/classes'}>Classes</Link>
-        <Link to={'/users'}>Users</Link>
         <RoomsList />
       </div>
     </div>
