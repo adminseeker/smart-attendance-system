@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { logout } from '../actions/auth';
 import AdminDashboard from './AdminDashboard';
 import StudentDashboard from './StudentDashboard';
 import TeacherDashboard from './TeacherDashboard';
@@ -14,13 +13,6 @@ const Dashboard = ({ user, loading, logout }) => {
       {user.user.role === 'admin' && <AdminDashboard />}
       {user.user.role === 'student' && <StudentDashboard />}
       {user.user.role === 'teacher' && <TeacherDashboard />}
-      <button
-        onClick={() => {
-          logout();
-        }}
-      >
-        Logout
-      </button>
     </div>
   );
 };
@@ -30,4 +22,4 @@ const mapStateToProps = (state) => ({
   loading: state.auth.loading,
 });
 
-export default connect(mapStateToProps, { logout })(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

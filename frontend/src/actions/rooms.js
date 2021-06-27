@@ -49,7 +49,7 @@ const editRoom = (room, id) => {
           'Content-Type': 'application/json',
         },
       };
-      console.log(11111);
+     
       const res = await axios.patch('/api/rooms/' + id + '/name', body, config);
       console.log(res.data);
 

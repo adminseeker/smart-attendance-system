@@ -3,7 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import createHistory from 'history/createBrowserHistory';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from '../components/Dashboard';
-import Login from '../components/Login';
+// import Login from '../components/Login';
 import ChangePassword from '../components/ChangePassword';
 import ForgotPassword from '../components/ForgotPassword';
 import ClassesList from '../components/ClassesList';
@@ -22,14 +22,17 @@ import EditAdmins from '../components/users/EditAdmins';
 import ClassUsers from '../components/classes/ClassUsers';
 import RoomTimings from '../components/rooms/RoomTimings';
 import RoomDayTimes from '../components/rooms/RoomDayTimes';
+import AddTiming from '../components/rooms/AddTiming';
+import EditTiming from '../components/rooms/EditTiming';
+import Landing from '../components/Landing';
 const history = createHistory();
 
 const AppRouter = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path='/' component={Login} exact={true} />
-        <Route path='/login' component={Login} exact={true} />
+        <Route path='/' component={Landing} exact={true} />
+        <Route path='/login' component={Landing} exact={true} />
         <Route path='/forgotpassword' component={ForgotPassword} exact={true} />
         <PrivateRoute path='/dashboard' component={Dashboard} exact={true} />
         <PrivateRoute
@@ -91,6 +94,17 @@ const AppRouter = () => {
         <PrivateRoute
           path='/room/:id/timings/:day'
           component={RoomDayTimes}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/add/room/:roomId/:day/timings'
+          component={AddTiming}
+          exact={true}
+        />
+
+        <PrivateRoute
+          path='/edit/room/:roomId/:day/timings/:id'
+          component={EditTiming}
           exact={true}
         />
       </Switch>
