@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { getTimingsbyid } from '../../actions/timings';
+import Header from '../Header';
 
 import { Link } from 'react-router-dom';
 import TimingItem from './TimingItem';
@@ -17,16 +18,33 @@ const RoomDayTimes = ({ getTimingsbyid, timings, match }) => {
 
   return dayTimings.length === 0 ? (
     <div>
-      <h3>No timings</h3>
-      <Link to={`/add/room/${id}/${day}/timings`}>Create Timing</Link>
+      <Header />
+      <div style={{ marginTop: '5rem' }}>
+        <div>
+          <h3>No timings</h3>
+          <Link to={`/add/room/${id}/${day}/timings`}>Create Timing</Link>
+        </div>
+      </div>
     </div>
   ) : (
     <div>
-      <Link to={`/add/room/${id}/${day}/timings`}>Create Timing</Link>
-      {dayTimings &&
-        dayTimings.map(({ timing }) => {
-       return  <TimingItem key={timing._id} timing={timing} room_id={id} day={day}/>
-        })}
+      <Header />
+      <div style={{ marginTop: '5rem' }}>
+        <div>
+          <Link to={`/add/room/${id}/${day}/timings`}>Create Timing</Link>
+          {dayTimings &&
+            dayTimings.map(({ timing }) => {
+              return (
+                <TimingItem
+                  key={timing._id}
+                  timing={timing}
+                  room_id={id}
+                  day={day}
+                />
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 };

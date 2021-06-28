@@ -2,6 +2,7 @@ import React from 'react';
 import TimingsForm from './TimingsForm';
 import { editTiming } from '../../actions/timings';
 import { connect } from 'react-redux';
+import Header from '../Header';
 
 const EditTiming = (props) => {
   let { roomId, day, id } = props.match.params;
@@ -9,14 +10,17 @@ const EditTiming = (props) => {
   // console.log(timing);
   return (
     <div>
-      <TimingsForm
-        timing={{ ...timing, day: day }}
-        onSubmit={async (timing) => {
-          // console.log(timing);
-          await props.dispatch(editTiming(timing, id, roomId));
-          props.history.push(`/room/${roomId}/timings/${day}`);
-        }}
-      />
+      <Header />
+      <div style={{ marginTop: '5rem' }}>
+        <TimingsForm
+          timing={{ ...timing, day: day }}
+          onSubmit={async (timing) => {
+            // console.log(timing);
+            await props.dispatch(editTiming(timing, id, roomId));
+            props.history.push(`/room/${roomId}/timings/${day}`);
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -28,7 +28,7 @@ const Header = (props) => {
   useEffect(() => {
     if (props.user.user.role == 'admin')
       setMisc({ ...misc, _classes: true, users: true });
-  }, [props.user.user.role, setMisc, misc]);
+  }, [props.user.user.role, setMisc]);
   let { _classes, users } = misc;
   return (
     <div className={classes.root}>
@@ -36,7 +36,6 @@ const Header = (props) => {
         <Toolbar>
           <Typography
             style={{ color: 'inherit', textDecoration: 'none' }}
-            variant='h6'
             className={classes.title}
             component={Link}
             to='/dashboard'
