@@ -35,7 +35,6 @@ const login = ({ email, password }) => {
 const logout = () => {
   return async (dispatch) => {
     try {
-      console.log('hi cool');
       await axios.post('/api/auth/logout');
       dispatch({
         type: 'LOGOUT',
@@ -89,8 +88,9 @@ const updateAccount = (data) => {
 
     const body = JSON.stringify(data);
     try {
-      await axios.patch('/api/users', body, config);
+      let res = await axios.patch('/api/users/me', body, config);
       await dispatch(loadUser());
+      return res.data;
     } catch (err) {
       console.log(err);
       dispatch({

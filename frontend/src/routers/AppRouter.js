@@ -3,7 +3,6 @@ import { Router, Route, Switch } from 'react-router-dom';
 import createHistory from 'history/createBrowserHistory';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from '../components/Dashboard';
-// import Login from '../components/Login';
 import ChangePassword from '../components/ChangePassword';
 import ForgotPassword from '../components/ForgotPassword';
 import ClassesList from '../components/ClassesList';
@@ -25,6 +24,7 @@ import RoomDayTimes from '../components/rooms/RoomDayTimes';
 import AddTiming from '../components/rooms/AddTiming';
 import EditTiming from '../components/rooms/EditTiming';
 import Landing from '../components/Landing';
+import Profile from '../components/Profile';
 const history = createHistory();
 
 const AppRouter = () => {
@@ -35,6 +35,8 @@ const AppRouter = () => {
         <Route path='/login' component={Landing} exact={true} />
         <Route path='/forgotpassword' component={ForgotPassword} exact={true} />
         <PrivateRoute path='/dashboard' component={Dashboard} exact={true} />
+        <PrivateRoute path='/profile' component={Profile} exact={true} />
+
         <PrivateRoute
           path='/changepassword'
           component={ChangePassword}

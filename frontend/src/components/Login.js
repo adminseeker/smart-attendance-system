@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Hidden } from '@material-ui/core';
 import { setAlert } from '../actions/alert';
+import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -115,6 +116,13 @@ const Login = (props) => {
             Sign In
           </Button>
         </form>
+        <Grid container>
+          <Grid item xs>
+            <Link to='/forgotpassword' variant='body2' style={{ fontSize: 16 }}>
+              Forgot password?
+            </Link>
+          </Grid>
+        </Grid>
       </div>
     </Container>
   );

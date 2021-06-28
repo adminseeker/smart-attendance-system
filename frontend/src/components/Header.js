@@ -62,7 +62,13 @@ const Header = (props) => {
                   Users
                 </Button>
               )}
-              <Button style={{ color: 'inherit' }}>Profile</Button>
+              <Button
+                style={{ color: 'inherit' }}
+                component={Link}
+                to='/profile'
+              >
+                Profile
+              </Button>
               <Button style={{ color: 'inherit' }} onClick={LogOut}>
                 Logout
               </Button>
