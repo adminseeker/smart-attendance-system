@@ -1,11 +1,11 @@
 import React from 'react';
 import RoomsForm from './RoomsForm';
-import { addRoom, editRoom } from '../actions/rooms';
+import { editRoom } from '../actions/rooms';
 import { connect } from 'react-redux';
 import Header from './Header';
+import { setAlert } from '../actions/alert';
 
 const EditRoom = (props) => {
-  console.log(props.room);
   return (
     <div>
       <Header />
@@ -13,7 +13,12 @@ const EditRoom = (props) => {
         <RoomsForm
           room={props.room}
           onSubmit={async (room) => {
-            await props.dispatch(editRoom(room, props.room._id));
+            let res = await props.dispatch(editRoom(room, props.room._id));
+            if (res && res.room_name)
+              props.dispatch(
+                setAlert('Room Upated successfully!!!', 'success')
+              );
+            else props.dispatch(setAlert('Room update failed!!!', 'error'));
             props.history.push('/dashboard');
           }}
         />

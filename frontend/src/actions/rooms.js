@@ -23,7 +23,6 @@ const addRoom = (room) => {
 };
 
 const getRooms = () => {
-  console.log('hi rooms');
   return async (dispatch) => {
     try {
       const res = await axios.get('/api/rooms');
@@ -49,9 +48,8 @@ const editRoom = (room, id) => {
           'Content-Type': 'application/json',
         },
       };
-     
+
       const res = await axios.patch('/api/rooms/' + id + '/name', body, config);
-      console.log(res.data);
 
       await dispatch(getRooms());
       return res.data;
@@ -73,7 +71,6 @@ const removeRoom = (id) => {
         },
       };
       const res = await axios.delete('/api/rooms/' + id, config);
-      console.log(res.data);
       await dispatch(getRooms());
       return res.data.msg;
     } catch (error) {
