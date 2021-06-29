@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getRooms } from '../actions/rooms';
@@ -32,10 +32,25 @@ const RoomsList = ({ rooms, getRooms }) => {
   });
   return Object.keys(rooms).length == 0 ? (
     <div style={{ textAlign: 'center' }}>
-      <Typography component='h1' variant='h2'>
+      <Typography
+        component='h1'
+        variant='h2'
+        color='primary'
+        style={{ textAlign: 'center' }}
+      >
         No Rooms
       </Typography>
-      <Link to={'/add/room'}>Create room</Link>
+      <Fab
+        variant='extended'
+        size='small'
+        aria-label='add'
+        className={classes.margin}
+        component={Link}
+        to={'/add/room'}
+      >
+        <AddIcon className={classes.extendedIcon} />
+        Create Room
+      </Fab>
     </div>
   ) : (
     <div>

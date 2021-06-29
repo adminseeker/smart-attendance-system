@@ -46,7 +46,7 @@ const RoomsListItem = (props) => {
         <CardActionArea>
           <CardMedia
             className={classes.media}
-            image={process.env.PUBLIC_URL + '/images/class-1.jpeg'}
+            image={process.env.PUBLIC_URL + '/images/room-1.jpeg'}
             title='class room'
           />
           <CardContent>
