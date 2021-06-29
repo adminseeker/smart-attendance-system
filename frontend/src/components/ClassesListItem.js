@@ -73,7 +73,7 @@ const ClassesListItem = (props) => {
             size='small'
             className={classes.deleteButton}
             onClick={async () => {
-              let msg = await props.dispatch(removeClass(props.room._id));
+              let msg = await props.dispatch(removeClass(props._class._id));
               props.dispatch(setAlert(msg, 'success'));
             }}
           >

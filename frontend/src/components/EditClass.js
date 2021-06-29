@@ -1,8 +1,9 @@
 import React from 'react';
 import ClassesForm from './ClassesForm';
-import { addClass, editClasses } from '../actions/classes';
+import { editClasses } from '../actions/classes';
 import { connect } from 'react-redux';
 import Header from './Header';
+import { setAlert } from '../actions/alert';
 
 const EditClass = (props) => {
   return (
@@ -12,7 +13,14 @@ const EditClass = (props) => {
         <ClassesForm
           _class={props._class}
           onSubmit={async (_class) => {
-            await props.dispatch(editClasses(_class, props._class._id));
+            let res = await props.dispatch(
+              editClasses(_class, props._class._id)
+            );
+            if (res && res.class_name)
+              props.dispatch(
+                setAlert('Class Upated successfully!!!', 'success')
+              );
+            else props.dispatch(setAlert('Class update failed!!!', 'error'));
             props.history.push('/classes');
           }}
         />
