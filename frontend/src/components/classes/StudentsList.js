@@ -1,34 +1,277 @@
-import React,{useEffect, useState} from "react";
-import {connect} from "react-redux";
-import { Link } from "react-router-dom";
-import FacebookCircularProgress from "../FacebookCircularProgress";
-import StudentsListItem from "./StudentsListItem";
-import {addStudents} from "../../actions/classes";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import FacebookCircularProgress from '../FacebookCircularProgress';
+import StudentsListItem from './StudentsListItem';
+import { addStudents } from '../../actions/classes';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import CreateIcon from '@material-ui/icons/Create';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import { setAlert } from '../../actions/alert';
+const useStyles1 = makeStyles((theme) => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+}));
+function TablePaginationActions(props) {
+  const classes = useStyles1();
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onChangePage } = props;
 
-const StudentsList = ({students,class_id,addStudents})=>{
-    const [usn,set_usn] = useState("")
-    return (
-        !students ? <FacebookCircularProgress /> :
-          <div>
-              Students
-              Add Students
-              <form>
-                <input type="text" name="usn" id="usn" value={usn} onChange={(e)=>set_usn(e.target.value)}/>
-                <button type="submit" onClick={(e)=>{e.preventDefault(); if(usn=="") alert("empty usn!"); else addStudents(class_id,usn) }}>Add Student</button>
-              </form>
-            {students.map((student) => (
-            <StudentsListItem key={student.student._id} student={student} class_id={class_id}/>
+  const handleFirstPageButtonClick = (event) => {
+    onChangePage(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onChangePage(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onChangePage(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <div className={classes.root}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label='first page'
+      >
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label='previous page'
+      >
+        {theme.direction === 'rtl' ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label='next page'
+      >
+        {theme.direction === 'rtl' ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label='last page'
+      >
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </div>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  table: {
+    marginTop: 50,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginBottom: 50,
+    maxWidth: '50%',
+  },
+}));
+const StudentsList = ({ students, class_id, addStudents, setAlert }) => {
+  const classes = useStyles();
+
+  const [usn, set_usn] = useState('');
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const emptyRows = students
+    ? rowsPerPage - Math.min(rowsPerPage, students.length - page * rowsPerPage)
+    : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  return !students ? (
+    <FacebookCircularProgress />
+  ) : (
+    <div>
+      <Typography
+        component='h1'
+        variant='h2'
+        color='primary'
+        style={{ textAlign: 'center' }}
+      >
+        Students
+      </Typography>
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline />
+
+        <div className={classes.paper}>
+          <Typography
+            component='h1'
+            variant='h4'
+            color='secondary'
+            style={{ textAlign: 'center' }}
+          >
+            Add Students
+          </Typography>
+
+          <Avatar className={classes.avatar}>
+            <CreateIcon />
+          </Avatar>
+          <form
+            className={classes.form}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (usn == '') alert('empty usn!');
+              else {
+                let data = await addStudents(class_id, usn);
+                console.log(data);
+                data.class_name
+                  ? setAlert('Student added successfully!!', 'success')
+                  : setAlert(data.msg, 'info');
+              }
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  variant='outlined'
+                  required
+                  fullWidth
+                  id='usn'
+                  label='USN'
+                  name='usn'
+                  autoComplete='off'
+                  value={usn}
+                  onChange={(e) => {
+                    set_usn(e.target.value);
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <Button
+              type='submit'
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+            >
+              Add Student
+            </Button>
+          </form>
+        </div>
+      </Container>
+      <TableContainer component={Paper} className={classes.table}>
+        <Table aria-label='simple table'>
+          <TableHead>
+            <TableRow>
+              <TableCell align='center'>USN</TableCell>
+              <TableCell align='center'>Semester</TableCell>
+              <TableCell align='center'>Name</TableCell>
+              <TableCell align='center'>Delete</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? students.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : students
+            ).map((student) => (
+              <StudentsListItem
+                key={student._id}
+                student={student}
+                class_id={class_id}
+              />
             ))}
-          </div>
-        )
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                colSpan={3}
+                count={students.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: { 'aria-label': 'rows per page' },
+                  native: true,
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 };
 
-const mapStateToProps = (state,props)=>(
-    {
-        students: state.users.ClassStudents,
-        
-    }
-)
+const mapStateToProps = (state, props) => ({
+  students: state.users.ClassStudents,
+});
 
-export default connect(mapStateToProps,{addStudents})(StudentsList);
-
+export default connect(mapStateToProps, { addStudents, setAlert })(
+  StudentsList
+);

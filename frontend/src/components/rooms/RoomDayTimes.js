@@ -16,6 +16,19 @@ const RoomDayTimes = ({ getTimingsbyid, timings, match }) => {
     setDayTimings(timings && timings.filter(({ timing }) => timing.day == day));
   }, [timings, day]);
 
+  useEffect(() => {
+    let tempTimings = dayTimings;
+    tempTimings.sort((a, b) =>
+      a.timing.start_time > b.timing.start_time
+        ? 1
+        : b.timing.start_time > a.timing.start_time
+        ? -1
+        : 0
+    );
+    // setDayTimings(tempTimings);
+    console.log(tempTimings);
+  }, []);
+
   return dayTimings.length === 0 ? (
     <div>
       <Header />

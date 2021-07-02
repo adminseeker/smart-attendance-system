@@ -1,32 +1,55 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { removeStudent } from '../../actions/classes';
 import { connect } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import Button from '@material-ui/core/Button';
+import { setAlert } from '../../actions/alert';
+const useStyles = makeStyles((theme) => ({
+  deleteButton: {
+    color: '#fff',
+    backgroundColor: theme.palette.error.main,
+    '&:hover': {
+      backgroundColor: theme.palette.error.light,
+    },
+  },
+}));
 
 const StudentsListItem = (props) => {
-  console.log(props.student);
+  const classes = useStyles();
   return (
-    <div>
-      <h3>{props.student.student.user.name}</h3>
-      <button
-        onClick={() => {
-          props.removeStudent(props.class_id, props.student.student._id);
-        }}
-      >
-        Remove
-      </button>
-    </div>
+    <TableRow
+      key={props.student.student.user && props.student.student.user._id}
+    >
+      <TableCell component='th' scope='row'>
+        {props.student.student.usn}
+      </TableCell>
+      <TableCell align='center'>{props.student.student.semester}</TableCell>
+      <TableCell align='center'>
+        {props.student.student.user && props.student.student.user.name}
+      </TableCell>
+
+      <TableCell align='center'>
+        <Button
+          size='small'
+          className={classes.deleteButton}
+          onClick={async () => {
+            let msg = await props.removeStudent(
+              props.class_id,
+              props.student.student._id
+            );
+            props.setAlert(msg, 'success');
+          }}
+        >
+          Delete
+        </Button>
+      </TableCell>
+    </TableRow>
   );
 };
 const mapStateToProps = (state, props) => ({});
 
-export default connect(mapStateToProps, { removeStudent })(StudentsListItem);
-
-/* <div>
-        <Link to={"/vehicles/edit/"+props.vehicle.vehicle_id}>
-            <h3>{props.vehicle.vehicle_name} - {props.vehicle.vehicle_type}- {props.vehicle.vehicle_number}</h3>
-        </Link>
-        <button onClick={async (e)=>{await props.dispatch(removeVehicles(props.vehicle.vehicle_id));}}>Remove</button>
-        <Link to={"/vehicles/"+props.vehicle.vehicle_id+"/journeys"}>Manage Journey</Link>
-         <Link to={"/vehicles/track/"+props.vehicle.vehicle_id}>Track Vehicle</Link>
-    </div> */
+export default connect(mapStateToProps, { removeStudent, setAlert })(
+  StudentsListItem
+);

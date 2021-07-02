@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import LoadingPage from '../LoadingPage';
-import { getUsers } from '../../actions/users';
-import { Link } from 'react-router-dom';
-import useSWR from 'swr';
+import Typography from '@material-ui/core/Typography';
 import StudentsList from './StudentsList';
 import { cleanUserState } from '../../actions/users';
 import TeacherList from './TeacherList';
 import { getClassUsers } from '../../actions/classes';
 import Header from '../Header';
-import FacebookCircularProgress from '../FacebookCircularProgress';
-
+import { Grid } from '@material-ui/core';
 const ClassUsers = ({ id, getClassUsers, cleanUserState }) => {
   useEffect(() => {
     cleanUserState();
@@ -20,9 +16,22 @@ const ClassUsers = ({ id, getClassUsers, cleanUserState }) => {
     <div>
       <Header />
       <div style={{ marginTop: '5rem' }}>
-        Users
-        <StudentsList class_id={id} />
-        <TeacherList class_id={id} />
+        <Typography
+          component='h1'
+          variant='h2'
+          color='primary'
+          style={{ textAlign: 'center' }}
+        >
+          Users
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item md={6} sm={12}>
+            <StudentsList class_id={id} />
+          </Grid>
+          <Grid item md={6} sm={12}>
+            <TeacherList class_id={id} />
+          </Grid>
+        </Grid>
       </div>
     </div>
   );
