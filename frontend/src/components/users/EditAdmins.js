@@ -3,6 +3,7 @@ import { editUsers } from '../../actions/users';
 import { connect } from 'react-redux';
 import UsersForm from './UsersForm';
 import Header from '../Header';
+import { setAlert } from '../../actions/alert';
 
 const EditAdmins = (props) => {
   return (
@@ -12,7 +13,14 @@ const EditAdmins = (props) => {
         <UsersForm
           user={props.admin}
           onSubmit={async (admin) => {
-            await props.dispatch(editUsers(admin, props.admin.user._id));
+            const res = await props.dispatch(
+              editUsers(admin, props.admin.user._id)
+            );
+            if (res) {
+              props.dispatch(
+                setAlert('Admin Updated Successfully!', 'success')
+              );
+            }
             props.history.push('/users');
           }}
         />

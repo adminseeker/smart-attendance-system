@@ -3,7 +3,7 @@ import UsersForm from './UsersForm';
 import { addUser } from '../../actions/users';
 import { connect } from 'react-redux';
 import Header from '../Header';
-
+import { setAlert } from '../../actions/alert';
 const AddUsers = (props) => {
   return (
     <div>
@@ -11,7 +11,10 @@ const AddUsers = (props) => {
       <div style={{ marginTop: '5rem' }}>
         <UsersForm
           onSubmit={async (user) => {
-            await props.dispatch(addUser(user));
+            const res = await props.dispatch(addUser(user));
+            if (res.msg) {
+              props.dispatch(setAlert(res.msg, 'success'));
+            }
             props.history.push('/users');
           }}
         />

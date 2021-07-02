@@ -79,7 +79,7 @@ const removeUser = (id) => {
       const res = await axios.delete('/api/users/' + id, config);
 
       await dispatch(getUsers());
-      return res.data;
+      return res.data.msg;
     } catch (error) {
       console.log(error);
       dispatch({
