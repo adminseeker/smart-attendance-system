@@ -19,7 +19,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
-
+import { v4 } from 'uuid';
 const useStyles1 = makeStyles((theme) => ({
   root: {
     flexShrink: 0,
@@ -154,7 +154,7 @@ const StudentsList = ({ students }) => {
                 <StudentsListItem key={student._id} student={student} />
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
+                <TableRow style={{ height: 53 * emptyRows }} key={v4()}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}

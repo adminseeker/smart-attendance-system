@@ -53,9 +53,9 @@ const TimingsForm = (props) => {
   let end_time_init = '07:30';
   if (props.timing.start_time && props.timing.end_time) {
     let date = moment(props.timing.start_time);
-    start_time_init = date.utc().format('hh:mm');
+    start_time_init = date.utc().format('HH:mm');
     date = moment(props.timing.end_time);
-    end_time_init = date.utc().format('hh:mm');
+    end_time_init = date.utc().format('HH:mm');
   }
 
   const [formData, setFormData] = useState({

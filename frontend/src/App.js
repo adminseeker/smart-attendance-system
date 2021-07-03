@@ -5,12 +5,32 @@ import configureStore from './store/configureStore';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
 import Alert from './components/Alert';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 const store = configureStore();
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#673AB7',
+      dark: '#512DA8',
+      light: '#D1C4E9',
+    },
+    secondary: {
+      main: '#448AFF',
+    },
+    text: {
+      primary: '#212121',
+      secondary: '#757575',
+      disabled: '#BDBDBD',
+      hint: '#FFFFFF',
+    },
+  },
+});
 
 const App = () => {
   useEffect(() => {
@@ -19,8 +39,10 @@ const App = () => {
   return (
     <div>
       <Provider store={store}>
-        <Alert />
-        <AppRouter />
+        <MuiThemeProvider theme={theme}>
+          <Alert />
+          <AppRouter />
+        </MuiThemeProvider>
       </Provider>
     </div>
   );

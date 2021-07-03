@@ -28,6 +28,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { setAlert } from '../../actions/alert';
+import { v4 } from 'uuid';
 const useStyles1 = makeStyles((theme) => ({
   root: {
     flexShrink: 0,
@@ -234,13 +235,13 @@ const StudentsList = ({ students, class_id, addStudents, setAlert }) => {
               : students
             ).map((student) => (
               <StudentsListItem
-                key={student._id}
+                key={v4()}
                 student={student}
                 class_id={class_id}
               />
             ))}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 53 * emptyRows }} key={v4()}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
