@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { v4 as uuid } from 'uuid';
 
 const addUser = (user) => {
   return async (dispatch) => {

@@ -189,14 +189,3 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps)(StudentsList);
-{
-  /* <div>
-<Header />
-<div style={{ marginTop: '5rem' }}>
-  Students
-  {students.map((student) => (
-    <StudentsListItem key={student._id} student={student} />
-  ))}
-</div>
-</div> */
-}

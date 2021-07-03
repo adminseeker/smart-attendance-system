@@ -1,9 +1,9 @@
+/* eslint-disable eqeqeq */
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getClasses } from '../actions/classes';
-import FacebookCircularProgress from './FacebookCircularProgress';
-import LoadingPage from './LoadingPage';
+
 import useSWR from 'swr';
 import ClassesListItem from './ClassesListItem';
 import Header from './Header';
@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 const ClassesList = ({ _classes, getClasses }) => {
   const classes = useStyles();
   useSWR('/classes', () => {
-    console.log('hi swr classes');
     getClasses();
   });
   return Object.keys(_classes).length == 0 ? (

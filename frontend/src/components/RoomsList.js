@@ -1,8 +1,8 @@
+/* eslint-disable eqeqeq */
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getRooms } from '../actions/rooms';
-import FacebookCircularProgress from './FacebookCircularProgress';
 import useSWR from 'swr';
 import RoomsListItem from './RoomsListItem';
 import Typography from '@material-ui/core/Typography';

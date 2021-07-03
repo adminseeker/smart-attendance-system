@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -5,8 +6,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
-import { Button } from '@material-ui/core';
+import { Button, Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -16,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
   },
 }));
 
@@ -28,12 +34,18 @@ const Header = (props) => {
   useEffect(() => {
     if (props.user.user.role == 'admin')
       setMisc({ ...misc, _classes: true, users: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.user.user.role, setMisc]);
   let { _classes, users } = misc;
   return (
     <div className={classes.root}>
       <AppBar position='fixed'>
         <Toolbar>
+          <Avatar
+            alt='SAS'
+            src={process.env.PUBLIC_URL + '/logo512.png'}
+            className={classes.large}
+          />
           <Typography
             style={{ color: 'inherit', textDecoration: 'none' }}
             className={classes.title}
