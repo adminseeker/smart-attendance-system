@@ -10,7 +10,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import Typography from '@material-ui/core/Typography';
-
+import useSWR from 'swr';
+import { getClasses } from '../../actions/classes';
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const RoomTimings = (props) => {
+  useSWR('/timingsForm', async () => {
+    await props.dispatch(getClasses());
+  });
   const days = [
     'sunday',
     'monday',
@@ -85,6 +89,5 @@ const RoomTimings = (props) => {
     </div>
   );
 };
-const mapStateToProps = (state, props) => ({});
 
-export default connect(mapStateToProps, {})(RoomTimings);
+export default connect()(RoomTimings);

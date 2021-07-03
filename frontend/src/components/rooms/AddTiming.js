@@ -3,6 +3,7 @@ import TimingsForm from './TimingsForm';
 import { addTiming } from '../../actions/timings';
 import { connect } from 'react-redux';
 import Header from '../Header';
+import { setAlert } from '../../actions/alert';
 
 const AddTiming = (props) => {
   let { roomId, day } = props.match.params;
@@ -14,7 +15,12 @@ const AddTiming = (props) => {
         <TimingsForm
           timing={{ day: day }}
           onSubmit={async (timing) => {
-            await props.dispatch(addTiming(timing, roomId));
+            let res = await props.dispatch(addTiming(timing, roomId));
+            res.msg
+              ? props.dispatch(setAlert(res.msg, 'info'))
+              : props.dispatch(
+                  setAlert('Timing added successfully!!', 'success')
+                );
             props.history.push(`/room/${roomId}/timings/${day}`);
           }}
         />

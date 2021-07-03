@@ -82,7 +82,7 @@ router.post('/:id/timing', auth, async (req, res) => {
     }
     const room = await Room.findById(req.params.id);
     if (!room) {
-      return res.status(404).json({ msg: 'room not found!' });
+      return res.json({ msg: 'room not found!' });
     }
     const _class = await Class.findById(req.body.class);
     if (!_class) {
@@ -139,7 +139,7 @@ router.get('/:id', auth, async (req, res) => {
     }
     const room = await Room.findById(req.params.id);
     if (!room) {
-      return res.status(404).json({ msg: 'Room not found!' });
+      return res.json({ msg: 'Room not found!' });
     }
     res.json(room);
   } catch (error) {
@@ -193,7 +193,7 @@ router.get('/:id/timings', auth, async (req, res) => {
         populate: { path: 'class', model: 'Class', select: '_id class_name' },
       });
     if (!room) {
-      return res.status(404).json({ msg: 'Room not found!' });
+      return res.json({ msg: 'Room not found!' });
     }
     res.json(room.timings);
   } catch (error) {
@@ -227,7 +227,7 @@ router.patch('/timings/:id', auth, async (req, res) => {
       { new: true }
     );
     if (!updated) {
-      return res.status(404).json({ msg: 'updated not found!' });
+      return res.json({ msg: 'updated not found!' });
     }
     res.json(updated);
   } catch (error) {
@@ -338,7 +338,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     const room = await Room.findOneAndDelete({ _id: req.params.id });
     if (!room) {
-      return res.status(404).json({ msg: 'Room not found!' });
+      return res.json({ msg: 'Room not found!' });
     }
     res.json({ msg: 'Room deleted!' });
   } catch (error) {

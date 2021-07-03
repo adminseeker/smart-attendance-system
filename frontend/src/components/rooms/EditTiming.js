@@ -3,11 +3,12 @@ import TimingsForm from './TimingsForm';
 import { editTiming } from '../../actions/timings';
 import { connect } from 'react-redux';
 import Header from '../Header';
+import { setAlert } from '../../actions/alert';
 
 const EditTiming = (props) => {
   let { roomId, day, id } = props.match.params;
   let { timing } = props.timing;
-  // console.log(timing);
+
   return (
     <div>
       <Header />
@@ -15,8 +16,12 @@ const EditTiming = (props) => {
         <TimingsForm
           timing={{ ...timing, day: day }}
           onSubmit={async (timing) => {
-            // console.log(timing);
-            await props.dispatch(editTiming(timing, id, roomId));
+            let res = await props.dispatch(editTiming(timing, id, roomId));
+            res.msg
+              ? props.dispatch(setAlert(res.msg, 'info'))
+              : props.dispatch(
+                  setAlert('Timing updated successfully!!', 'success')
+                );
             props.history.push(`/room/${roomId}/timings/${day}`);
           }}
         />
@@ -26,7 +31,6 @@ const EditTiming = (props) => {
 };
 
 const mapStateToProps = (state, props) => {
-  // console.log(state.timings);
   return {
     timing: state.timings.filter(
       (timing) => String(timing.timing._id) === String(props.match.params.id)

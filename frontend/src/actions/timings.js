@@ -82,7 +82,7 @@ const removeTiming = (id, roomId) => {
         '/api/rooms/' + roomId + '/timings/' + id,
         config
       );
-      console.log(res.data);
+
       await dispatch(getTimingsbyid(roomId));
       return res.data.msg;
     } catch (error) {
