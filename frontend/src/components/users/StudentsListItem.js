@@ -27,7 +27,11 @@ const StudentsListItem = (props) => {
   const classes = useStyles();
   return (
     <TableRow key={props.student.user && props.student.user._id}>
-      <TableCell component='th' scope='row'>
+      <TableCell
+        scope='row'
+        component={Link}
+        to={'/attendance/students/' + (props.student && props.student._id)}
+      >
         {props.student.usn}
       </TableCell>
       <TableCell align='center'>{props.student.semester}</TableCell>

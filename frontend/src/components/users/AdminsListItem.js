@@ -27,7 +27,13 @@ const AdminsListItem = (props) => {
   const classes = useStyles();
   return (
     <TableRow key={props.admin.user._id}>
-      <TableCell align='center'>{props.admin.user.name}</TableCell>
+      <TableCell
+        align='center'
+        component={Link}
+        to={'/attendance/admins/' + (props.admin && props.admin._id)}
+      >
+        {props.admin.user.name}
+      </TableCell>
       <TableCell align='center'>
         {' '}
         <Button

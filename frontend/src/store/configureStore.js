@@ -6,6 +6,7 @@ import roomsReducer from '../reducers/rooms';
 import classesReducer from '../reducers/classes';
 import usersReducer from '../reducers/users';
 import timingsReducer from '../reducers/timings';
+import attendanceReducer from '../reducers/attendance';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const configureStore = () => {
@@ -17,6 +18,7 @@ const configureStore = () => {
       classes: classesReducer,
       users: usersReducer,
       timings: timingsReducer,
+      attendance: attendanceReducer,
     }),
     composeEnhancers(applyMiddleware(thunk))
   );

@@ -25,6 +25,10 @@ import AddTiming from '../components/rooms/AddTiming';
 import EditTiming from '../components/rooms/EditTiming';
 import Landing from '../components/Landing';
 import Profile from '../components/Profile';
+import StudentAttendance from '../components/StudentAttendance';
+import TeacherAttendance from '../components/TeacherAttendance';
+import AdminAttendance from '../components/AdminAttendance';
+
 const history = createHistory();
 
 const AppRouter = () => {
@@ -107,6 +111,21 @@ const AppRouter = () => {
         <PrivateRoute
           path='/edit/room/:roomId/:day/timings/:id'
           component={EditTiming}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/attendance/students/:id'
+          component={StudentAttendance}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/attendance/teachers/:id'
+          component={TeacherAttendance}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/attendance/admins/:id'
+          component={AdminAttendance}
           exact={true}
         />
       </Switch>
