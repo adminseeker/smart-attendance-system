@@ -34,6 +34,7 @@ const Header = (props) => {
   useEffect(() => {
     if (props.user.user.role == 'admin')
       setMisc({ ...misc, _classes: true, users: true });
+    if (props.user.user.role == 'teacher') setMisc({ ...misc, _classes: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.user.user.role, setMisc]);
   let { _classes, users } = misc;
@@ -56,15 +57,24 @@ const Header = (props) => {
           </Typography>
           {props.isAuthenticated && (
             <div>
-              {_classes && (
-                <Button
-                  component={Link}
-                  to='/classes'
-                  style={{ color: 'inherit' }}
-                >
-                  Classes
-                </Button>
-              )}
+              {_classes &&
+                (props.user.user.role == 'admin' ? (
+                  <Button
+                    component={Link}
+                    to='/classes'
+                    style={{ color: 'inherit' }}
+                  >
+                    Classes
+                  </Button>
+                ) : (
+                  <Button
+                    component={Link}
+                    to={'/attendance/classes/' + props.user.teacher._id}
+                    style={{ color: 'inherit' }}
+                  >
+                    Classes
+                  </Button>
+                ))}
               {users && (
                 <Button
                   component={Link}

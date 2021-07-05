@@ -113,6 +113,30 @@ const getClassUsers = (id) => {
   };
 };
 
+const getClassStudents = (id) => {
+  return async (dispatch) => {
+    try {
+      const ClassStudents = await axios.get(
+        '/api/classes/' + id + '/students/teacher'
+      );
+
+      let users = {
+        ClassStudents: ClassStudents.data,
+      };
+      dispatch({
+        type: 'GET_USERS',
+        users,
+      });
+      return '';
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: 'USERS_ERROR',
+      });
+    }
+  };
+};
+
 const editClasses = (_class, id) => {
   return async (dispatch) => {
     try {
@@ -219,4 +243,5 @@ export {
   removeStudent,
   getClassUsers,
   removeTeacher,
+  getClassStudents,
 };

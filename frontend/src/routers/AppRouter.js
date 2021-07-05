@@ -28,6 +28,8 @@ import Profile from '../components/Profile';
 import StudentAttendance from '../components/StudentAttendance';
 import TeacherAttendance from '../components/TeacherAttendance';
 import AdminAttendance from '../components/AdminAttendance';
+import TeacherStudentAtt from '../components/TeacherStudentAtt';
+import TeacherAttClassStudents from '../components/TeacherAttClassStudents';
 
 const history = createHistory();
 
@@ -126,6 +128,16 @@ const AppRouter = () => {
         <PrivateRoute
           path='/attendance/admins/:id'
           component={AdminAttendance}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/attendance/classes/:id'
+          component={TeacherStudentAtt}
+          exact={true}
+        />
+        <PrivateRoute
+          path='/attendance/class/:id/students'
+          component={TeacherAttClassStudents}
           exact={true}
         />
       </Switch>

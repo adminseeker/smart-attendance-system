@@ -73,7 +73,7 @@ const TeacherAttendance = (props) => {
               justify='center'
               alignItems='center'
             >
-              <Grid item xs={12} md={6} style={{ marginTop: '5rem' }}>
+              <Grid item xs={6} md={4} style={{ marginTop: '5rem' }}>
                 <Doughnut data={data} />
               </Grid>
             </Grid>

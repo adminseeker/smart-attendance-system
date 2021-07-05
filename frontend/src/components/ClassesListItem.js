@@ -54,32 +54,38 @@ const ClassesListItem = (props) => {
               component={Link}
               style={{ textDecoration: 'none' }}
               color='primary'
-              to={'/class/' + props._class._id + '/users'}
+              to={
+                !props.NoAddOption
+                  ? '/class/' + props._class._id + '/users'
+                  : '/attendance/class/' + props._class._id + '/students'
+              }
             >
               {props._class.class_name}
             </Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions>
-          <Button
-            size='small'
-            className={classes.editButton}
-            component={Link}
-            to={'/edit/class/' + props._class._id}
-          >
-            Edit
-          </Button>
-          <Button
-            size='small'
-            className={classes.deleteButton}
-            onClick={async () => {
-              let msg = await props.dispatch(removeClass(props._class._id));
-              props.dispatch(setAlert(msg, 'success'));
-            }}
-          >
-            Delete
-          </Button>
-        </CardActions>
+        {!props.NoAddOption && (
+          <CardActions>
+            <Button
+              size='small'
+              className={classes.editButton}
+              component={Link}
+              to={'/edit/class/' + props._class._id}
+            >
+              Edit
+            </Button>
+            <Button
+              size='small'
+              className={classes.deleteButton}
+              onClick={async () => {
+                let msg = await props.dispatch(removeClass(props._class._id));
+                props.dispatch(setAlert(msg, 'success'));
+              }}
+            >
+              Delete
+            </Button>
+          </CardActions>
+        )}
       </Card>
     </Grid>
   );

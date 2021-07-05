@@ -55,9 +55,28 @@ const getAttendanceByAdminId = (id) => {
     }
   };
 };
+const getClassAttendanceTeacher = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await axios.get('/api/attendance/teacher/' + id + '/classes');
+
+      dispatch({
+        type: 'GET_TEACHER_CLASS_ATTENDANCE',
+        teacherClassAttendance: res.data,
+      });
+      return '';
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: 'ATTENDANCE_ERROR',
+      });
+    }
+  };
+};
 
 export {
   getAttendanceByStudentId,
   getAttendanceByTeacherId,
   getAttendanceByAdminId,
+  getClassAttendanceTeacher,
 };

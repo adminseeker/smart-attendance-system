@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ClassesList = ({ _classes, getClasses }) => {
+const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
   const classes = useStyles();
   useSWR('/classes', () => {
-    getClasses();
+    !NoAddOption && getClasses();
   });
-  return Object.keys(_classes).length == 0 ? (
+  return _classes.length == 0 && ($classes && $classes.length) == 0 ? (
     <div>
       <Header />
       <div style={{ marginTop: '5rem' }}>
@@ -44,17 +44,19 @@ const ClassesList = ({ _classes, getClasses }) => {
           >
             No Classes
           </Typography>
-          <Fab
-            variant='extended'
-            size='small'
-            aria-label='add'
-            className={classes.margin}
-            component={Link}
-            to={'/add/class'}
-          >
-            <AddIcon className={classes.extendedIcon} />
-            Create Class
-          </Fab>
+          {!NoAddOption && (
+            <Fab
+              variant='extended'
+              size='small'
+              aria-label='add'
+              className={classes.margin}
+              component={Link}
+              to={'/add/class'}
+            >
+              <AddIcon className={classes.extendedIcon} />
+              Create Class
+            </Fab>
+          )}
         </div>
       </div>
     </div>
@@ -71,21 +73,36 @@ const ClassesList = ({ _classes, getClasses }) => {
           >
             Classes
           </Typography>
-          <Fab
-            variant='extended'
-            size='small'
-            aria-label='add'
-            className={classes.margin}
-            component={Link}
-            to={'/add/class'}
-          >
-            <AddIcon className={classes.extendedIcon} />
-            Create Class
-          </Fab>
+          !{' '}
+          {!NoAddOption && (
+            <Fab
+              variant='extended'
+              size='small'
+              aria-label='add'
+              className={classes.margin}
+              component={Link}
+              to={'/add/class'}
+            >
+              <AddIcon className={classes.extendedIcon} />
+              Create Class
+            </Fab>
+          )}
           <Grid container spacing={2} style={{ margin: 50 }}>
             {_classes &&
               _classes.map((_class) => (
-                <ClassesListItem key={_class._id} _class={_class} />
+                <ClassesListItem
+                  key={_class._id}
+                  _class={_class}
+                  NoAddOption={false}
+                />
+              ))}
+            {$classes &&
+              $classes.map((_class) => (
+                <ClassesListItem
+                  key={_class._id}
+                  _class={_class}
+                  NoAddOption={true}
+                />
               ))}
           </Grid>
         </div>
