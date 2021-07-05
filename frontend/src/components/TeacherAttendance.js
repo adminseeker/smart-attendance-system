@@ -8,7 +8,9 @@ import { getAttendanceByTeacherId } from '../actions/attendance';
 import useSWR from 'swr';
 const TeacherAttendance = (props) => {
   useSWR('/attendance', () => {
-    props.getAttendanceByTeacherId(props.match.params.id);
+    props.getAttendanceByTeacherId(
+      props.match.params.id && props.match.params.id
+    );
   });
   const random_rgb = () => {
     var o = Math.round,
