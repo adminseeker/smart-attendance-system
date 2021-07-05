@@ -73,7 +73,6 @@ const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
           >
             Classes
           </Typography>
-          !{' '}
           {!NoAddOption && (
             <Fab
               variant='extended'
