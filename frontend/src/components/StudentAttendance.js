@@ -9,7 +9,9 @@ import useSWR from 'swr';
 
 const StudentAttendance = (props) => {
   useSWR('/attendance', () => {
-    props.getAttendanceByStudentId(props.match.params.id);
+    props.getAttendanceByStudentId(
+      props.match.params.id && props.match.params.id
+    );
   });
   const data = {
     labels:
