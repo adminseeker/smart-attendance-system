@@ -1,27 +1,32 @@
-import React, { useEffect } from "react";
-import {connect} from "react-redux";
-import LoadingPage from "./LoadingPage";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import FacebookCircularProgress from './FacebookCircularProgress';
+import StudentAttendance from './StudentAttendance';
+import { getAttendanceByStudentId } from '../actions/attendance';
+import useSWR from 'swr';
 
-import FacebookCircularProgress from "./FacebookCircularProgress";
+const StudentDashboard = ({
+  user,
+  loading,
+  getAttendanceByStudentId,
+  studentAttendance,
+}) => {
+  useSWR('/attendance', () => {
+    getAttendanceByStudentId(user.student._id);
+  });
+  return loading ? (
+    <FacebookCircularProgress />
+  ) : (
+    <StudentAttendance studentAttendance={studentAttendance} />
+  );
+};
 
-const StudentDashboard = ({user,loading})=>{
-       
-    return (
-        loading ? <FacebookCircularProgress />       
-    :(
-        <div>
-            Student Dashboard
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
+  loading: state.auth.loading,
+  studentAttendance: state.attendance,
+});
 
-        </div>
-    )
-      )
-}
-
-const mapStateToProps = (state)=>({
-    user:state.auth.user,
-    loading:state.auth.loading
-    
-})
-
-export default connect(mapStateToProps)(StudentDashboard);
+export default connect(mapStateToProps, { getAttendanceByStudentId })(
+  StudentDashboard
+);

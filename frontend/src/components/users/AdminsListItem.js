@@ -1,25 +1,64 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import { removeUser } from "../../actions/users";
-import { connect } from "react-redux";
-
-const AdminsListItem = (props)=>(
-    <div>
-            <h3>{props.admin.user.name}</h3>
-            <Link to={"/edit/admins/"+props.admin.user._id}>Edit</Link>
-            <button onClick={()=>{props.dispatch(removeUser(props.admin.user._id))}}>Remove</button>
-    </div>
-);
-
-
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { removeUser } from '../../actions/users';
+import { connect } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import Button from '@material-ui/core/Button';
+import { setAlert } from '../../actions/alert';
+const useStyles = makeStyles((theme) => ({
+  editButton: {
+    backgroundColor: theme.palette.warning.main,
+    textDecoration: 'none',
+    '&:hover': {
+      backgroundColor: theme.palette.warning.light,
+    },
+  },
+  deleteButton: {
+    color: '#fff',
+    backgroundColor: theme.palette.error.main,
+    '&:hover': {
+      backgroundColor: theme.palette.error.light,
+    },
+  },
+}));
+const AdminsListItem = (props) => {
+  const classes = useStyles();
+  return (
+    <TableRow key={props.admin.user._id}>
+      <TableCell
+        align='center'
+        component={Link}
+        to={'/attendance/admins/' + (props.admin && props.admin._id)}
+      >
+        {props.admin.user.name}
+      </TableCell>
+      <TableCell align='center'>
+        {' '}
+        <Button
+          size='small'
+          className={classes.editButton}
+          component={Link}
+          to={'/edit/admins/' + props.admin.user._id}
+        >
+          Edit
+        </Button>
+      </TableCell>
+      <TableCell align='center'>
+        <Button
+          size='small'
+          className={classes.deleteButton}
+          onClick={async () => {
+            let msg = await props.dispatch(removeUser(props.admin.user._id));
+            props.dispatch(setAlert(msg, 'success'));
+          }}
+        >
+          Delete
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 export default connect()(AdminsListItem);
-
-/* <div>
-        <Link to={"/vehicles/edit/"+props.vehicle.vehicle_id}>
-            <h3>{props.vehicle.vehicle_name} - {props.vehicle.vehicle_type}- {props.vehicle.vehicle_number}</h3>
-        </Link>
-        <button onClick={async (e)=>{await props.dispatch(removeVehicles(props.vehicle.vehicle_id));}}>Remove</button>
-        <Link to={"/vehicles/"+props.vehicle.vehicle_id+"/journeys"}>Manage Journey</Link>
-         <Link to={"/vehicles/track/"+props.vehicle.vehicle_id}>Track Vehicle</Link>
-    </div> */

@@ -1,26 +1,94 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import { removeClass } from "../actions/classes";
-import { connect } from "react-redux";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { removeClass } from '../actions/classes';
+import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import { setAlert } from '../actions/alert';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 140,
+  },
+  editButton: {
+    backgroundColor: theme.palette.warning.main,
+    textDecoration: 'none',
+    '&:hover': {
+      backgroundColor: theme.palette.warning.light,
+    },
+  },
+  deleteButton: {
+    color: '#fff',
+    backgroundColor: theme.palette.error.main,
+    '&:hover': {
+      backgroundColor: theme.palette.error.light,
+    },
+  },
+}));
 
-const ClassesListItem = (props)=>(
-    <div>
-            <Link to={"/class/"+props._class._id+"/users"}><h3>{props._class.class_name}</h3></Link>
-            <Link to={"/edit/class/"+props._class._id}>Edit</Link>
-            <button onClick={()=>{props.dispatch(removeClass(props._class._id))}}>Remove</button>
-       
-    </div>
-);
-
-
+const ClassesListItem = (props) => {
+  const classes = useStyles();
+  return (
+    <Grid item xs={12} md={6} lg={4} xl={3}>
+      {' '}
+      <Card className={classes.root}>
+        <CardActionArea>
+          <CardMedia
+            className={classes.media}
+            image={process.env.PUBLIC_URL + '/images/class-1.jpeg'}
+            title='subject'
+          />
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant='h5'
+              component={Link}
+              style={{ textDecoration: 'none' }}
+              color='primary'
+              to={
+                !props.NoAddOption
+                  ? '/class/' + props._class._id + '/users'
+                  : '/attendance/class/' + props._class._id + '/students'
+              }
+            >
+              {props._class.class_name}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        {!props.NoAddOption && (
+          <CardActions>
+            <Button
+              size='small'
+              className={classes.editButton}
+              component={Link}
+              to={'/edit/class/' + props._class._id}
+            >
+              Edit
+            </Button>
+            <Button
+              size='small'
+              className={classes.deleteButton}
+              onClick={async () => {
+                let msg = await props.dispatch(removeClass(props._class._id));
+                props.dispatch(setAlert(msg, 'success'));
+              }}
+            >
+              Delete
+            </Button>
+          </CardActions>
+        )}
+      </Card>
+    </Grid>
+  );
+};
 
 export default connect()(ClassesListItem);
-
-/* <div>
-        <Link to={"/vehicles/edit/"+props.vehicle.vehicle_id}>
-            <h3>{props.vehicle.vehicle_name} - {props.vehicle.vehicle_type}- {props.vehicle.vehicle_number}</h3>
-        </Link>
-        <button onClick={async (e)=>{await props.dispatch(removeVehicles(props.vehicle.vehicle_id));}}>Remove</button>
-        <Link to={"/vehicles/"+props.vehicle.vehicle_id+"/journeys"}>Manage Journey</Link>
-         <Link to={"/vehicles/track/"+props.vehicle.vehicle_id}>Track Vehicle</Link>
-    </div> */
