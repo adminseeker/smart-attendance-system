@@ -15,6 +15,10 @@ const ClassSchema = new mongoose.Schema({
     },
     class_name:{
         type:String
+    },
+    total_classes:{
+        type:Number,
+        default:0
     }
 });
 
