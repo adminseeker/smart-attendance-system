@@ -110,10 +110,15 @@ const AdminAttendance = (props) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows = props.adminAttendance
-    ? rowsPerPage -
-      Math.min(rowsPerPage, props.adminAttendance.length - page * rowsPerPage)
-    : 0;
+  const emptyRows =
+    props.adminAttendance && props.adminAttendance
+      ? rowsPerPage -
+        Math.min(
+          rowsPerPage,
+          props.adminAttendance &&
+            props.adminAttendance.length - page * rowsPerPage
+        )
+      : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -124,7 +129,7 @@ const AdminAttendance = (props) => {
     setPage(0);
   };
 
-  return props.adminAttendance ? (
+  return props.adminAttendance && props.adminAttendance ? (
     <div>
       <Header />
       <div style={{ marginTop: '5rem' }}>
@@ -145,11 +150,12 @@ const AdminAttendance = (props) => {
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
-                ? props.adminAttendance.slice(
+                ? props.adminAttendance &&
+                  props.adminAttendance.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : props.adminAttendance
+                : props.adminAttendance && props.adminAttendance
               ).map((admin) => (
                 <TableRow key={admin.attendance._id}>
                   <TableCell align='center'>
@@ -168,7 +174,7 @@ const AdminAttendance = (props) => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                   colSpan={3}
-                  count={props.adminAttendance.length}
+                  count={props.adminAttendance && props.adminAttendance.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
