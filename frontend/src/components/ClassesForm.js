@@ -44,7 +44,7 @@ const ClassesForm = (props) => {
           color='primary'
           style={{ textAlign: 'center' }}
         >
-          {props._class ? 'Edit Room' : 'Create Room'}
+          {props._class ? 'Edit Class' : 'Create Class'}
         </Typography>
         <Avatar className={classes.avatar}>
           {props._class ? <UpdateIcon /> : <CreateIcon />}
