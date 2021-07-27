@@ -12,6 +12,7 @@ const EditStudents = (props) => {
       <div style={{ marginTop: '5rem' }}>
         <UsersForm
           user={props.student}
+          history={props.history}
           onSubmit={async (student) => {
             const res = await props.dispatch(
               editUsers(student, props.student.user._id)

@@ -11,6 +11,14 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import IconButton from '@material-ui/core/IconButton';
+//import AlarmIcon from '@material-ui/icons/Alarm';
+import VpnKeyRoundedIcon from '@material-ui/icons/VpnKeyRounded';
+import AccessidLoader from './AccessidLoader';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
+import axios,{CancelToken} from "axios";
+
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UsersForm = (props) => {
+  
   const classes = useStyles();
   let ph = props.user ? JSON.stringify(props.user.user.phone) : '';
   const [formData, setFormData] = useState({
@@ -47,14 +56,64 @@ const UsersForm = (props) => {
     phone: ph,
     role: props.user ? props.user.user.role : '',
     usn: props.user ? props.user.usn : '',
+    access_id: props.user ? props.user.access_id : '',
+    admin_access_id: props.user && props.user.user.role=='admin' ? props.user.admin_access_id : '',
     semester: props.user ? props.user.semester : '',
   });
-
-  const { name, email, password, phone, role, usn, semester } = formData;
+  const [onClickedKey,setOnClickedKey] = useState(false);
+  const [onClickedKey2,setOnClickedKey2] = useState(false);
+  const [cancellationToken,setCancellationToken] = useState(undefined);
+  const [cancellationToken2,setCancellationToken2] = useState(undefined);
+  const { name, email, password, phone, role, usn, semester, access_id, admin_access_id } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  
+  const handleAccessID = async()=>{
+    const source = CancelToken.source();
+
+    setOnClickedKey(true);
+    setCancellationToken(source)
+    const res = await axios.post("/api/attendance/user/"+props.user.user._id,undefined,{cancelToken:source.token});
+    console.log(res);
+    if(res.data.msg){
+      props.dispatch(
+        setAlert(res.data.msg, 'warning')
+      )
+    }else if(res.data.access_id){
+      setFormData({...formData,access_id:res.data.access_id})
+    }
+    setOnClickedKey(false)
+  }
+
+  const handleStop = ()=>{
+    setOnClickedKey(false);
+    cancellationToken ?. cancel("User Cancelled!"); 
+    
+  }
+
+  const handleAccessID2 = async()=>{
+    const source = CancelToken.source();
+    setOnClickedKey2(true);
+    setCancellationToken2(source)
+    const res = await axios.post("/api/attendance/admin/"+props.user.user._id+"/admin_access_id",undefined,{cancelToken:source.token});
+    console.log(res.data);
+    if(res.data.msg){
+      props.dispatch(
+        setAlert(res.data.msg, 'warning')
+      )
+    }else if(res.data.admin_access_id){
+      setFormData({...formData,admin_access_id:res.data.admin_access_id})
+    }
+    setOnClickedKey2(false)
+  }
+
+  const handleStop2 = ()=>{
+    setOnClickedKey2(false);
+    cancellationToken2 ?. cancel("User Cancelled!"); 
+  }
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -87,6 +146,7 @@ const UsersForm = (props) => {
         if (props.user.user.phone !== phone) updatedItems.phone = phone;
         if (props.user.user.role !== role) updatedItems.role = role;
         if (props.user.usn !== usn) updatedItems.usn = usn;
+        if (props.user.access_id !== access_id) updatedItems.access_id = access_id;
         if (props.user.semester !== semester) updatedItems.semester = semester;
         props.onSubmit(updatedItems);
       }
@@ -209,7 +269,82 @@ const UsersForm = (props) => {
                 />
               </Grid>
             )}
+            {props.user && <Grid item xs={10}>
+                <TextField
+                  variant='outlined'
+                  required
+                  fullWidth
+                  id='access_id'
+                  label="Access ID"
+                  name='access_id'
+                  onChange={onChange}
+                  autoComplete='off'
+                  value={access_id}
+                  disabled
+                />
+                </Grid>
+            }
+                {props.user && !onClickedKey &&
+                <Grid item xs={1}>
+                  <IconButton color="secondary" aria-label="Add Access ID" onClick={handleAccessID}>
+                    <VpnKeyRoundedIcon />
+                  </IconButton>
+                </Grid>
+                } 
+                {props.user && onClickedKey && 
+                <Grid item xs={1}>
+                  <IconButton color="secondary" aria-label="Waiting" >
+                    <AccessidLoader />
+                  </IconButton>
+                </Grid>
+                }
+                {props.user && onClickedKey &&
+                <Grid item xs={1}>
+                  <IconButton color="primary" style={{"color":"red"}} aria-label="Stop" onClick={handleStop}>
+                    <HighlightOffRoundedIcon />
+                  </IconButton>
+                </Grid>
+                }
+
+              {props.user && role=='admin'&& <Grid item xs={10}>
+                <TextField
+                  variant='outlined'
+                  required
+                  fullWidth
+                  id='access_id'
+                  label="Admin Access ID"
+                  name='admin_access_id'
+                  onChange={onChange}
+                  autoComplete='off'
+                  value={admin_access_id}
+                  disabled
+                />
+                </Grid>}
+                {props.user && role=='admin'&& !onClickedKey2 &&
+                <Grid item xs={1}>
+                  <IconButton color="secondary" aria-label="Add Admin Access ID" onClick={handleAccessID2}>
+                    <VpnKeyRoundedIcon />
+                  </IconButton>
+                </Grid>
+                } 
+                {props.user && role=='admin'&& onClickedKey2 && 
+                <Grid item xs={1}>
+                  <IconButton color="secondary" aria-label="Waiting" >
+                    <AccessidLoader />
+                  </IconButton>
+                </Grid>
+                }
+                {props.user && role=='admin'&& onClickedKey2 &&
+                <Grid item xs={1}>
+                  <IconButton color="primary" style={{"color":"red"}} aria-label="Stop" onClick={handleStop2}>
+                    <HighlightOffRoundedIcon />
+                  </IconButton>
+                </Grid>
+                }
+
+
           </Grid>
+          
           <Button
             type='submit'
             fullWidth

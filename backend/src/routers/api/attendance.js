@@ -136,7 +136,7 @@ router.post('/admin/:id/admin_access_id', auth, async (req, res) => {
         return res.json(admin);
       }
       await mqtt.send('rfid_reply', 'false');
-      return res.json({ msg: 'unable to add!' });
+      return res.json({ msg: 'Access ID already registered!' });
     }
     await mqtt.send('rfid_reply', 'false');
     return res.json({ msg: 'unable to add!' });
