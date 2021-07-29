@@ -2,7 +2,11 @@ import React from 'react';
 import Header from './Header';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAttendanceByAdminId,clearAttendanceState } from '../actions/attendance';
+import moment from 'moment';
+import {
+  getAttendanceByAdminId,
+  clearAttendanceState,
+} from '../actions/attendance';
 import useSWR from 'swr';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -20,7 +24,6 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
-
 const useStyles1 = makeStyles((theme) => ({
   root: {
     flexShrink: 0,
@@ -31,22 +34,22 @@ const useStyles1 = makeStyles((theme) => ({
 function TablePaginationActions(props) {
   const classes = useStyles1();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+  const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleFirstPageButtonClick = (event) => {
-    onChangePage(event, 0);
+    onPageChange(event, 0);
   };
 
   const handleBackButtonClick = (event) => {
-    onChangePage(event, page - 1);
+    onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (event) => {
-    onChangePage(event, page + 1);
+    onPageChange(event, page + 1);
   };
 
   const handleLastPageButtonClick = (event) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
@@ -103,7 +106,7 @@ const useStyles = makeStyles({
 
 const AdminAttendance = (props) => {
   useSWR('/attendance', () => {
-    props.clearAttendanceState()
+    props.clearAttendanceState();
     props.getAttendanceByAdminId(props.match.params.id);
   });
 
@@ -161,7 +164,7 @@ const AdminAttendance = (props) => {
               ).map((admin) => (
                 <TableRow key={admin._id}>
                   <TableCell align='center'>
-                    {admin.lastUpdated}
+                    {moment(admin.lastUpdated).utc().format('MMMM Do YYYY')}
                   </TableCell>
                 </TableRow>
               ))}
@@ -183,8 +186,8 @@ const AdminAttendance = (props) => {
                     inputProps: { 'aria-label': 'rows per page' },
                     native: true,
                   }}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                   ActionsComponent={TablePaginationActions}
                 />
               </TableRow>
@@ -213,6 +216,7 @@ const mapStateToProps = (state, props) => ({
   adminAttendance: state.attendance.attendance,
 });
 
-export default connect(mapStateToProps, { getAttendanceByAdminId,clearAttendanceState })(
-  AdminAttendance
-);
+export default connect(mapStateToProps, {
+  getAttendanceByAdminId,
+  clearAttendanceState,
+})(AdminAttendance);
