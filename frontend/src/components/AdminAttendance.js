@@ -2,7 +2,7 @@ import React from 'react';
 import Header from './Header';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAttendanceByAdminId } from '../actions/attendance';
+import { getAttendanceByAdminId,clearAttendanceState } from '../actions/attendance';
 import useSWR from 'swr';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -19,6 +19,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+
 
 const useStyles1 = makeStyles((theme) => ({
   root: {
@@ -102,6 +103,7 @@ const useStyles = makeStyles({
 
 const AdminAttendance = (props) => {
   useSWR('/attendance', () => {
+    props.clearAttendanceState()
     props.getAttendanceByAdminId(props.match.params.id);
   });
 
@@ -157,9 +159,9 @@ const AdminAttendance = (props) => {
                   )
                 : props.adminAttendance && props.adminAttendance
               ).map((admin) => (
-                <TableRow key={admin.attendance._id}>
+                <TableRow key={admin._id}>
                   <TableCell align='center'>
-                    {props.attendance.lastUpdated}
+                    {admin.lastUpdated}
                   </TableCell>
                 </TableRow>
               ))}
@@ -211,6 +213,6 @@ const mapStateToProps = (state, props) => ({
   adminAttendance: state.attendance.attendance,
 });
 
-export default connect(mapStateToProps, { getAttendanceByAdminId })(
+export default connect(mapStateToProps, { getAttendanceByAdminId,clearAttendanceState })(
   AdminAttendance
 );

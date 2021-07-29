@@ -16,6 +16,8 @@ const attendanceReducer = (state = defaultClassState, action) => {
       return action.teacherClassAttendance;
     case 'LOGOUT':
       return {};
+    case 'CLEAR_ATTENDANCE':
+      return {}
     default:
       return state;
   }

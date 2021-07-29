@@ -4,10 +4,11 @@ import Header from './Header';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAttendanceByTeacherId } from '../actions/attendance';
+import { getAttendanceByTeacherId,clearAttendanceState } from '../actions/attendance';
 import useSWR from 'swr';
 const TeacherAttendance = (props) => {
   useSWR('/attendance', () => {
+    props.clearAttendanceState()
     props.getAttendanceByTeacherId(
       props.match.params.id && props.match.params.id
     );
@@ -86,6 +87,6 @@ const TeacherAttendance = (props) => {
 const mapStateToProps = (state, props) => ({
   teacherAttendance: state.attendance,
 });
-export default connect(mapStateToProps, { getAttendanceByTeacherId })(
+export default connect(mapStateToProps, { getAttendanceByTeacherId,clearAttendanceState })(
   TeacherAttendance
 );

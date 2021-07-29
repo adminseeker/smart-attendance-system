@@ -74,9 +74,22 @@ const getClassAttendanceTeacher = (id) => {
   };
 };
 
+const clearAttendanceState = () =>{
+  return async (dispatch)=>{
+    try {
+      dispatch({
+        type:'CLEAR_ATTENDANCE'
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
 export {
   getAttendanceByStudentId,
   getAttendanceByTeacherId,
   getAttendanceByAdminId,
   getClassAttendanceTeacher,
+  clearAttendanceState
 };
