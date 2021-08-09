@@ -1,9 +1,13 @@
 /* eslint-disable eqeqeq */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getClasses } from '../actions/classes';
+import { setAlert } from '../actions/alert';
+import { setLoading } from '../actions/loading';
 
+import download from 'downloadjs';
+import { Parser } from 'json2csv';
 import useSWR from 'swr';
 import ClassesListItem from './ClassesListItem';
 import Header from './Header';
@@ -26,11 +30,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
+const ClassesList = ({
+  _classes,
+  $classes,
+  getClasses,
+  NoAddOption,
+  teacherReport,
+  setAlert,
+  setLoading,
+  loading,
+}) => {
   const classes = useStyles();
   useSWR('/classes', () => {
     !NoAddOption && getClasses();
   });
+  const genRep = async () => {
+    setLoading();
+    const json2csvParser = new Parser();
+    let csvTeacher;
+    if (teacherReport.length > 0) {
+      csvTeacher = json2csvParser.parse(teacherReport);
+    } else {
+      csvTeacher = 'No Data Found';
+    }
+    download(
+      csvTeacher,
+      'Attendance-report-' + Date.now() + '.csv',
+      'text/csv'
+    );
+    await setAlert('Successfully downloaded!!', 'success');
+  };
+  useEffect(() => {
+    if (!loading) {
+      genRep();
+    }
+    //eslint-disable-next-line
+  }, [loading]);
+
   return _classes.length == 0 && ($classes && $classes.length) == 0 ? (
     <div>
       <Header />
@@ -93,6 +129,7 @@ const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
                   key={_class._id}
                   _class={_class}
                   NoAddOption={false}
+                  // genRep={genRep}
                 />
               ))}
             {$classes &&
@@ -101,6 +138,7 @@ const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
                   key={_class._id}
                   _class={_class}
                   NoAddOption={true}
+                  // genRep={genRep}
                 />
               ))}
           </Grid>
@@ -112,6 +150,13 @@ const ClassesList = ({ _classes, $classes, getClasses, NoAddOption }) => {
 
 const mapStateToProps = (state, props) => ({
   _classes: state.classes,
+  teacherReport: state.report,
+  loading: state.buffing,
+  alert: state.alert,
 });
 
-export default connect(mapStateToProps, { getClasses })(ClassesList);
+export default connect(mapStateToProps, {
+  getClasses,
+  setAlert,
+  setLoading,
+})(ClassesList);

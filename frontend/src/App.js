@@ -5,7 +5,7 @@ import configureStore from './store/configureStore';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
 import Alert from './components/Alert';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 
 const store = configureStore();
 
@@ -13,7 +13,7 @@ if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: {
       main: '#673AB7',

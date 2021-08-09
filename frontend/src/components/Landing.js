@@ -36,7 +36,7 @@ const Landing = (props) => {
             <Grid
               container
               direction='column'
-              justify='flex-start'
+              justifyContent='flex-start'
               alignItems='center'
               className={classes.paperContainer}
             >

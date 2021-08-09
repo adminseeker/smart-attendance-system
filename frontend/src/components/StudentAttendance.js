@@ -1,43 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAttendanceByStudentId,clearAttendanceState } from '../actions/attendance';
-import useSWR from 'swr';
+import Button from '@material-ui/core/Button';
+import DescriptionIcon from '@material-ui/icons/Description';
+import download from 'downloadjs';
+import { Parser } from 'json2csv';
+
+import { setLoading, clearLoading } from '../actions/loading';
+
+import { getStudentReport, clearReport } from '../actions/report';
+import { setAlert } from '../actions/alert';
 
 const StudentAttendance = (props) => {
-  useSWR('/attendance', () => {
-    props.clearAttendanceState();
-    props.getAttendanceByStudentId(
-      props.match.params.id && props.match.params.id
-    );
-  });
+  useEffect(() => {
+    if (props.match) {
+      props.clearReport();
+      props.setLoading();
+      props.getStudentReport(props.match && props.match.params.id);
+      props.clearLoading();
+    }
+    // eslint-disable-next-line
+  }, []);
   const data = {
     labels:
-      props.studentAttendance.classes &&
-      props.studentAttendance.classes.map((_class) => _class.class_name),
+      props.studentReport &&
+      props.studentReport.map((_class) => _class.class_name),
     datasets: [
       {
         label: '# of Total classes',
         data:
-          props.studentAttendance.classes &&
-          props.studentAttendance.classes.map((_class) => _class.total_classes),
+          props.studentReport &&
+          props.studentReport.map((_class) => _class.total_classes),
         backgroundColor: 'rgb(255, 99, 132)',
       },
       {
         label: '# of Attended classes',
         data:
-          props.studentAttendance.classes &&
-          props.studentAttendance.classes.map(
-            (_class) =>
-              props.studentAttendance.attendance &&
-              props.studentAttendance.attendance.filter(
-                // eslint-disable-next-line eqeqeq
-                (att) => _class._id == att.class
-              ).length
-          ),
+          props.studentReport &&
+          props.studentReport.map((_class) => _class.attend_classes),
         backgroundColor: 'rgb(54, 162, 235)',
       },
     ],
@@ -54,6 +57,18 @@ const StudentAttendance = (props) => {
       ],
     },
   };
+
+  const genRep = () => {
+    const json2csvParser = new Parser();
+    const csvStudent = json2csvParser.parse(props.studentReport);
+    download(
+      csvStudent,
+      props.usn + '-Attendance-report-' + Date.now() + '.csv',
+      'text/csv'
+    );
+    setAlert('Successfully Downloaded!!', 'success');
+  };
+
   return (
     <div>
       <Header />
@@ -70,10 +85,36 @@ const StudentAttendance = (props) => {
             </Typography>
           </Grid>
           <Grid item xs={12}>
+            <Typography
+              component='h1'
+              variant='h2'
+              color='primary'
+              style={{ textAlign: 'center' }}
+            >
+              <Button
+                variant='contained'
+                color='primary'
+                size='large'
+                startIcon={<DescriptionIcon />}
+                onClick={() => {
+                  if (props.studentReport.length > 0) genRep();
+                  else
+                    setAlert(
+                      'Please Wait till attendance loads!! or You have not enrolled in any class',
+                      'warning'
+                    );
+                }}
+              >
+                Get Attendance Report
+              </Button>
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
             <Grid
               container
               direction='row'
-              justify='center'
+              justifyContent='center'
               alignItems='center'
             >
               <Grid item xs={12} md={6} style={{ marginTop: '5rem' }}>
@@ -88,9 +129,20 @@ const StudentAttendance = (props) => {
 };
 
 const mapStateToProps = (state, props) => ({
-  studentAttendance: state.attendance,
+  studentReport: state.report,
+  usn: state.auth.user.student
+    ? state.auth.user.student.usn
+    : state.users.students.filter(
+        //eslint-disable-next-line
+        (stud) => props.match.params.id == stud._id
+      )[0].usn,
+  loading: state.buffing,
 });
 
-export default connect(mapStateToProps, { getAttendanceByStudentId,clearAttendanceState })(
-  StudentAttendance
-);
+export default connect(mapStateToProps, {
+  getStudentReport,
+  setLoading,
+  clearLoading,
+  clearReport,
+  setAlert,
+})(StudentAttendance);

@@ -180,7 +180,7 @@ const TeacherAttClassStudents = ({
                     )
                   : studentTotalData
                 ).map((student) => (
-                  <TableRow>
+                  <TableRow key={v4()}>
                     <TableCell>{student.usn}</TableCell>
 
                     <TableCell align='center'>{student.name}</TableCell>

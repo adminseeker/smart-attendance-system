@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory as createHistory } from 'history';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from '../components/Dashboard';
 import ChangePassword from '../components/ChangePassword';

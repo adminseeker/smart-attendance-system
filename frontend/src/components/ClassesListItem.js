@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { removeClass } from '../actions/classes';
+import { getTeacherReport } from '../actions/report';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +13,10 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { setAlert } from '../actions/alert';
+import { setLoading, clearLoading } from '../actions/loading';
+
+import DescriptionIcon from '@material-ui/icons/Description';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -37,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ClassesListItem = (props) => {
   const classes = useStyles();
+
   return (
     <Grid item xs={12} md={6} lg={4} xl={3}>
       {' '}
@@ -63,29 +69,46 @@ const ClassesListItem = (props) => {
               {props._class.class_name}
             </Typography>
           </CardContent>
-        </CardActionArea>
-        {!props.NoAddOption && (
-          <CardActions>
-            <Button
-              size='small'
-              className={classes.editButton}
-              component={Link}
-              to={'/edit/class/' + props._class._id}
-            >
-              Edit
-            </Button>
-            <Button
-              size='small'
-              className={classes.deleteButton}
-              onClick={async () => {
-                let msg = await props.dispatch(removeClass(props._class._id));
-                props.dispatch(setAlert(msg, 'success'));
-              }}
-            >
-              Delete
-            </Button>
-          </CardActions>
-        )}
+        </CardActionArea>{' '}
+        <CardActions>
+          {!props.NoAddOption && (
+            <>
+              <Button
+                size='small'
+                className={classes.editButton}
+                component={Link}
+                to={'/edit/class/' + props._class._id}
+              >
+                Edit
+              </Button>
+              <Button
+                size='small'
+                className={classes.deleteButton}
+                onClick={async () => {
+                  let msg = await props.dispatch(removeClass(props._class._id));
+                  props.dispatch(setAlert(msg, 'success'));
+                }}
+              >
+                Delete
+              </Button>
+            </>
+          )}
+          <Button
+            size='small'
+            variant='contained'
+            color='primary'
+            startIcon={<DescriptionIcon />}
+            onClick={async () => {
+              props.dispatch(setLoading());
+              await props.dispatch(
+                getTeacherReport(props._class.teacher, props._class._id)
+              );
+              props.dispatch(clearLoading());
+            }}
+          >
+            Get Report
+          </Button>
+        </CardActions>
       </Card>
     </Grid>
   );

@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import Header from './Header';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAttendanceByTeacherId,clearAttendanceState } from '../actions/attendance';
-import useSWR from 'swr';
+import {
+  getAttendanceByTeacherId,
+  clearAttendanceState,
+} from '../actions/attendance';
+
 const TeacherAttendance = (props) => {
-  useSWR('/attendance', () => {
-    props.clearAttendanceState()
-    props.getAttendanceByTeacherId(
-      props.match.params.id && props.match.params.id
-    );
-  });
+  useEffect(() => {
+    props.clearAttendanceState();
+    if (props.match)
+      props.getAttendanceByTeacherId(props.match && props.match.params.id);
+    // eslint-disable-next-line
+  }, []);
   const random_rgb = () => {
     var o = Math.round,
       r = Math.random,
@@ -71,7 +74,7 @@ const TeacherAttendance = (props) => {
             <Grid
               container
               direction='row'
-              justify='center'
+              justifyContent='center'
               alignItems='center'
             >
               <Grid item xs={6} md={4} style={{ marginTop: '5rem' }}>
@@ -87,6 +90,7 @@ const TeacherAttendance = (props) => {
 const mapStateToProps = (state, props) => ({
   teacherAttendance: state.attendance,
 });
-export default connect(mapStateToProps, { getAttendanceByTeacherId,clearAttendanceState })(
-  TeacherAttendance
-);
+export default connect(mapStateToProps, {
+  getAttendanceByTeacherId,
+  clearAttendanceState,
+})(TeacherAttendance);

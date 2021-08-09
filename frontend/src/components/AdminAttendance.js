@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './Header';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
@@ -7,7 +7,6 @@ import {
   getAttendanceByAdminId,
   clearAttendanceState,
 } from '../actions/attendance';
-import useSWR from 'swr';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -105,10 +104,11 @@ const useStyles = makeStyles({
 });
 
 const AdminAttendance = (props) => {
-  useSWR('/attendance', () => {
+  useEffect(() => {
     props.clearAttendanceState();
-    props.getAttendanceByAdminId(props.match.params.id);
-  });
+    if (props.match) props.getAttendanceByAdminId(props.match.params.id);
+    // eslint-disable-next-line
+  }, []);
 
   const classes = useStyles();
 
