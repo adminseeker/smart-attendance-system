@@ -1,5 +1,5 @@
 /* eslint-disable eqeqeq */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getClasses } from '../actions/classes';
@@ -41,6 +41,7 @@ const ClassesList = ({
   loading,
 }) => {
   const classes = useStyles();
+  const [className, setClassName] = useState('');
   useSWR('/classes', () => {
     !NoAddOption && getClasses();
   });
@@ -55,7 +56,7 @@ const ClassesList = ({
     }
     download(
       csvTeacher,
-      'Attendance-report-' + Date.now() + '.csv',
+      className + '-attendance-report-' + Date.now() + '.csv',
       'text/csv'
     );
     await setAlert('Successfully downloaded!!', 'success');
@@ -129,7 +130,7 @@ const ClassesList = ({
                   key={_class._id}
                   _class={_class}
                   NoAddOption={false}
-                  // genRep={genRep}
+                  setClassName={setClassName}
                 />
               ))}
             {$classes &&
@@ -138,7 +139,7 @@ const ClassesList = ({
                   key={_class._id}
                   _class={_class}
                   NoAddOption={true}
-                  // genRep={genRep}
+                  setClassName={setClassName}
                 />
               ))}
           </Grid>

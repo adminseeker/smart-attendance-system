@@ -99,6 +99,7 @@ const ClassesListItem = (props) => {
             color='primary'
             startIcon={<DescriptionIcon />}
             onClick={async () => {
+              props.setClassName(props._class.class_name);
               props.dispatch(setLoading());
               await props.dispatch(
                 getTeacherReport(props._class.teacher, props._class._id)
