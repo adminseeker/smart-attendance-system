@@ -73,27 +73,33 @@ router.post('/add', auth, async (req, res) => {
     req.body.password = await bcrypt.hash(req.body.password, salt);
 
     const user = new User(req.body);
-    await user.save();
+    
     if (user.role == 'admin') {
+      await user.save();
       const admin = new Admin({ user: user.id });
       await admin.save();
+      return res.json({ msg: 'User Added' });
     } else if (user.role == 'teacher') {
+      await user.save();
       const teacher = new Teacher({ user: user.id, usn });
       await teacher.save();
+      return res.json({ msg: 'User Added' });
     } else if (user.role == 'student') {
+      await user.save();
       const student = new Student({
         user: user.id,
         usn,
         semester: req.body.semester,
       });
       await student.save();
+      return res.json({ msg: 'User Added' });
     } else {
-      return res.status(404).json('invalid user');
+      return res.json({msg:'invalid user'});
     }
 
-    res.json({ msg: 'User Added' });
+    
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 
@@ -318,15 +324,14 @@ router.patch('/update/:id', auth, async (req, res) => {
     }
 
     const updates = req.body;
+    
     delete updates.token;
     delete updates._id;
     delete updates.id;
-    const editUser = await User.findOneAndUpdate(
+    const _user = await User.findOne(
       { _id: req.params.id },
-      updates,
-      { new: true }
     ).select('-password -tokens');
-    if (!editUser) {
+    if (!_user) {
       return res.json({ msg: 'user not found!' });
     }
     if (updates.usn) {
@@ -337,12 +342,26 @@ router.patch('/update/:id', auth, async (req, res) => {
         return res.json({ msg: 'USN already registered!' });
       }
     }
+    
+    if(updates.role){
+    if(!(updates.role=='admin' ||  updates.role=='student' || updates.role=='teacher')){
+      return res.json({ msg: 'role invalid, Available roles: admin/student/teacher' });
+    }
+  }
     if (updates.email) {
-      const check = await User.find({ email: req.body.email });
-      if (check.length !== 0) {
+      const check = await User.findOne({ email: req.body.email });
+      if (check) {
         return res.json({ msg: 'Email already registered!' });
       }
     }
+   
+    const editUser = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      updates,
+      { new: true }
+    ).select('-password -tokens');
+    
+    
     const editStudentUser = await Student.findOneAndUpdate(
       { user: req.params.id },
       updates,
@@ -353,10 +372,18 @@ router.patch('/update/:id', auth, async (req, res) => {
       updates,
       { new: true }
     );
+    const editAdminUser = await Admin.findOneAndUpdate(
+      { user: req.params.id },
+      updates,
+      { new: true }
+    );
     if (editStudentUser) {
       return res.json({ user: editUser, student: editStudentUser });
     } else if (editTeacherUser) {
-      return res.json({ user: editUser, student: editTeacherUser });
+      return res.json({ user: editUser, teacher: editTeacherUser });
+    }
+    else if (editAdminUser) {
+      return res.json({ user: editUser, admin: editAdminUser });
     }
     return res.json({ msg: 'Update failure' });
   } catch (error) {
@@ -458,7 +485,13 @@ router.delete('/:id', auth, async (req, res) => {
       const teacher = await Teacher.deleteOne({ user: req.params.id });
       return res.json({ msg: 'Teacher deleted' });
     } else if (UserToDelete.role == 'admin') {
-      return res.json({ msg: 'Admin user cannot be deleted' });
+      if(req.user.id==req.params.id){
+        return res.json({ msg: 'Admin can\'t delete himself!!!' });
+      }
+      const deletedUser = await User.deleteOne({ _id: req.params.id });
+      const admin = await Admin.deleteOne({ user: req.params.id });
+      return res.json({ msg: 'Admin deleted' });
+
     }
     return res.json({ msg: 'Something went wrong' });
   } catch (error) {

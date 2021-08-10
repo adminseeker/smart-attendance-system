@@ -54,8 +54,8 @@ const TimingItem = (props) => {
           size='small'
           className={classes.deleteButton}
           onClick={async () => {
-            let msg = await props.dispatch(removeTiming(timing._id, room_id));
-            props.dispatch(setAlert(msg, 'success'));
+            let msg = await props.removeTiming(timing._id, room_id);
+            props.setAlert(msg, 'success');
           }}
         >
           Delete
@@ -65,4 +65,8 @@ const TimingItem = (props) => {
   );
 };
 
-export default connect()(TimingItem);
+const mapStateToProps = (state, props) => ({
+  lol:"lol"
+});
+
+export default connect(mapStateToProps,{removeTiming,setAlert})(TimingItem);

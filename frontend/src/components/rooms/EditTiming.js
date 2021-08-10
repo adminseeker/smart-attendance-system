@@ -7,13 +7,13 @@ import { setAlert } from '../../actions/alert';
 
 const EditTiming = (props) => {
   let { roomId, day, id } = props.match.params;
-  let { timing } = props.timing;
+  let timing  = props.timing ? props.timing.timing : "";
 
   return (
     <div>
       <Header />
       <div style={{ marginTop: '5rem' }}>
-        <TimingsForm
+       {props.timing && <TimingsForm
           timing={{ ...timing, day: day }}
           onSubmit={async (timing) => {
             let res = await props.dispatch(editTiming(timing, id, roomId));
@@ -24,7 +24,7 @@ const EditTiming = (props) => {
                 );
             props.history.push(`/room/${roomId}/timings/${day}`);
           }}
-        />
+        />}
       </div>
     </div>
   );
