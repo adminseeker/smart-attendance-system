@@ -1,4 +1,4 @@
-# Smart Attendance System (Under development)
+# Smart Attendance System - https://sas.aravindweb.in
 
 This repo contains web server and ui interface required for the smart-attendance-system.
 
